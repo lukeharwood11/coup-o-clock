@@ -75,7 +75,9 @@ export const GamePage = () => {
                 <div className={styles.mainGameContainer}>
                     <div className={styles.gameContent}>
                         {/* Main game content goes here */}
-                        <motion.div onClick={() => setHandShowing(!handShowing)} className={styles.hand}>
+                        <motion.div 
+                            onClick={() => setHandShowing(!handShowing)}
+                            className={styles.hand} >
                             <Card id="1" width={150} hidden={!handShowing} variant="contessa" />
                             <Card id="2" width={150} hidden={!handShowing} variant="captain" />
                         </motion.div>
