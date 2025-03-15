@@ -1,10 +1,10 @@
+from app.controllers.rooms import utils as room_utils
 from fastapi import APIRouter, HTTPException
-import boto3
 from botocore.exceptions import ClientError
 from decimal import Decimal
 from app.models import Room
 from typing import List
-from app.controllers.rooms import utils as room_utils
+import boto3
 
 router = APIRouter(prefix="/rooms", tags=["Rooms"])
 

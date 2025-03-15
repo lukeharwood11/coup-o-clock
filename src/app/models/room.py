@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 from decimal import Decimal
 from enum import Enum
-from typing import Optional
 
 
 class RoomVariation(str, Enum):

@@ -1,8 +1,8 @@
-import fastapi
-import boto3
-import uvicorn
 from botocore.exceptions import ClientError
 from app.routers import rooms
+import fastapi
+import uvicorn
+import boto3
 
 
 def create_app() -> fastapi.FastAPI:
