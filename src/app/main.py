@@ -16,7 +16,7 @@ def create_app() -> fastapi.FastAPI:
     )
 
     # Include routers
-    app.include_router(rooms.router)
+    # app.include_router(rooms.router)
     app.include_router(websockets.router)
 
     # Mount static files

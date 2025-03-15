@@ -1,6 +1,7 @@
-from typing import Dict, List, Set
+from typing import Dict, List, Set, Optional
 from fastapi import WebSocket
 import json
+import uuid
 
 
 class ConnectionManager:
@@ -11,10 +12,18 @@ class ConnectionManager:
         self.connection_rooms: Dict[WebSocket, str] = {}
         # Map of room_code -> list of player information
         self.room_players: Dict[str, List[Dict]] = {}
+        # Map of websocket -> player_id
+        self.player_ids: Dict[WebSocket, str] = {}
 
-    async def connect(self, websocket: WebSocket, room_code: str, player_name: str):
-        """Connect a websocket to a room"""
+    async def connect(
+        self, websocket: WebSocket, room_code: str, player_name: str
+    ) -> str:
+        """Connect a websocket to a room and return the player ID"""
         await websocket.accept()
+
+        # Generate a unique player ID
+        player_id = str(uuid.uuid4())
+        self.player_ids[websocket] = player_id
 
         # Create room if it doesn't exist
         if room_code not in self.active_rooms:
@@ -39,6 +48,8 @@ class ConnectionManager:
             },
         )
 
+        return player_id
+
     async def disconnect(self, websocket: WebSocket):
         """Disconnect a websocket from its room"""
         if websocket not in self.connection_rooms:
@@ -57,6 +68,10 @@ class ConnectionManager:
         # Remove connection from room
         self.active_rooms[room_code].remove(websocket)
         del self.connection_rooms[websocket]
+
+        # Remove player ID
+        if websocket in self.player_ids:
+            del self.player_ids[websocket]
 
         # If room is empty, remove it
         if not self.active_rooms[room_code]:
@@ -88,6 +103,10 @@ class ConnectionManager:
     def get_room_players(self, room_code: str) -> List[Dict]:
         """Get all players in a room"""
         return self.room_players.get(room_code, [])
+
+    def get_player_id(self, websocket: WebSocket) -> Optional[str]:
+        """Get the player ID for a websocket"""
+        return self.player_ids.get(websocket)
 
     def set_player_ready(self, websocket: WebSocket, is_ready: bool):
         """Set a player's ready status"""
