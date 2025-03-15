@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coup O' Clock - Room Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .hidden {
+            display: none;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, button {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .player-list {
+            margin-bottom: 15px;
+        }
+        .player {
+            padding: 5px;
+            margin: 5px 0;
+            background-color: #f1f1f1;
+            border-radius: 3px;
+        }
+        .ready {
+            background-color: #c8e6c9;
+        }
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .game-board {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .player-card {
+            width: 200px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        .player-card.current {
+            border: 2px solid #4CAF50;
+            background-color: #e8f5e9;
+        }
+        .player-card.dead {
+            opacity: 0.5;
+        }
+        .player-card h3 {
+            margin-top: 0;
+            text-align: center;
+        }
+        .player-coins {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .player-cards {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+        .character-card {
+            width: 60px;
+            height: 90px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            font-size: 12px;
+            text-align: center;
+        }
+        .character-card.revealed {
+            background-color: #ffcdd2;
+            text-decoration: line-through;
+        }
+        .character-card.hidden {
+            background-color: #3f51b5;
+            color: white;
+            display: flex;
+        }
+        .game-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .action-btn {
+            padding: 8px 16px;
+        }
+        .game-info {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card" id="join-card">
+            <h2>Coup O' Clock</h2>
+            <div class="form-group">
+                <label for="player-name">Your Name:</label>
+                <input type="text" id="player-name" placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+                <button id="create-room-btn">Create New Room</button>
+                <p>- OR -</p>
+                <label for="room-code">Join Existing Room:</label>
+                <input type="text" id="room-code" placeholder="Enter room code">
+                <button id="join-room-btn">Join Room</button>
+            </div>
+        </div>
+
+        <div class="card hidden" id="room-card">
+            <h2>Room: <span id="room-code-display"></span></h2>
+            <div class="player-list">
+                <h3>Players:</h3>
+                <div id="players-container"></div>
+            </div>
+            <div id="ready-container">
+                <button id="ready-btn">I'm Ready</button>
+            </div>
+            <div id="chat-container">
+                <h3>Chat:</h3>
+                <div id="chat-messages"></div>
+                <div class="form-group">
+                    <input type="text" id="chat-input" placeholder="Type a message...">
+                    <button id="send-chat-btn">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card hidden" id="game-card">
+            <h2>Game in Progress</h2>
+            <div class="game-info">
+                <p>Turn: <span id="turn-display">1</span> | Current Player: <span id="current-player-display">-</span></p>
+            </div>
+            <div class="game-board" id="game-board">
+                <!-- Player cards will be added here -->
+            </div>
+            <div class="game-actions" id="game-actions">
+                <!-- Action buttons will be added here when it's the player's turn -->
+            </div>
+            <div id="game-chat-container">
+                <h3>Game Chat:</h3>
+                <div id="game-chat-messages"></div>
+                <div class="form-group">
+                    <input type="text" id="game-chat-input" placeholder="Type a message...">
+                    <button id="game-send-chat-btn">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const joinCard = document.getElementById('join-card');
+        const roomCard = document.getElementById('room-card');
+        const gameCard = document.getElementById('game-card');
+        const playerNameInput = document.getElementById('player-name');
+        const roomCodeInput = document.getElementById('room-code');
+        const createRoomBtn = document.getElementById('create-room-btn');
+        const joinRoomBtn = document.getElementById('join-room-btn');
+        const roomCodeDisplay = document.getElementById('room-code-display');
+        const playersContainer = document.getElementById('players-container');
+        const readyBtn = document.getElementById('ready-btn');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const sendChatBtn = document.getElementById('send-chat-btn');
+        const turnDisplay = document.getElementById('turn-display');
+        const currentPlayerDisplay = document.getElementById('current-player-display');
+        const gameBoard = document.getElementById('game-board');
+        const gameActions = document.getElementById('game-actions');
+        const gameChatMessages = document.getElementById('game-chat-messages');
+        const gameChatInput = document.getElementById('game-chat-input');
+        const gameSendChatBtn = document.getElementById('game-send-chat-btn');
+
+        // State
+        let socket = null;
+        let playerName = '';
+        let playerId = '';
+        let roomCode = '';
+        let isReady = false;
+        let players = [];
+        let readyPlayers = new Set();
+        let gameState = null;
+
+        // Event Listeners
+        createRoomBtn.addEventListener('click', createRoom);
+        joinRoomBtn.addEventListener('click', joinRoom);
+        readyBtn.addEventListener('click', toggleReady);
+        sendChatBtn.addEventListener('click', sendChatMessage);
+        gameSendChatBtn.addEventListener('click', sendGameChatMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        });
+        gameChatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendGameChatMessage();
+            }
+        });
+
+        // Functions
+        function createRoom() {
+            playerName = playerNameInput.value.trim();
+            if (!playerName) {
+                alert('Please enter your name');
+                return;
+            }
+
+            connectToRoom('new', true);
+        }
+
+        function joinRoom() {
+            playerName = playerNameInput.value.trim();
+            roomCode = roomCodeInput.value.trim().toUpperCase();
+            
+            if (!playerName) {
+                alert('Please enter your name');
+                return;
+            }
+            
+            if (!roomCode) {
+                alert('Please enter a room code');
+                return;
+            }
+
+            connectToRoom(roomCode, false);
+        }
+
+        function connectToRoom(code, isCreate) {
+            // Close existing socket if any
+            if (socket) {
+                socket.close();
+            }
+
+            // Create WebSocket connection
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws/room/${code}?player_name=${encodeURIComponent(playerName)}&create=${isCreate}`;
+            
+            socket = new WebSocket(wsUrl);
+            
+            socket.onopen = () => {
+                console.log('Connected to room');
+            };
+            
+            socket.onmessage = (event) => {
+                handleMessage(JSON.parse(event.data));
+            };
+            
+            socket.onclose = (event) => {
+                console.log('Disconnected from room', event.code, event.reason);
+                if (event.code === 4000) {
+                    alert('Room already exists. Please try a different code.');
+                } else if (event.code !== 1000) {
+                    alert(`Connection closed: ${event.reason || 'Unknown reason'}`);
+                }
+                
+                // Reset UI
+                joinCard.classList.remove('hidden');
+                roomCard.classList.add('hidden');
+                gameCard.classList.add('hidden');
+            };
+            
+            socket.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                alert('Error connecting to room');
+            };
+        }
+
+        function handleMessage(message) {
+            console.log('Received message:', message);
+            
+            switch (message.type) {
+                case 'room_joined':
+                    roomCode = message.room_code;
+                    players = message.players;
+                    playerId = message.player_id;
+                    
+                    // Update UI
+                    roomCodeDisplay.textContent = roomCode;
+                    updatePlayersList();
+                    
+                    // Show room card, hide join card
+                    joinCard.classList.add('hidden');
+                    roomCard.classList.remove('hidden');
+                    
+                    // Add system message
+                    addChatMessage('System', `You joined room ${roomCode}`);
+                    break;
+                    
+                case 'player_joined':
+                    players = message.players;
+                    updatePlayersList();
+                    addChatMessage('System', `${message.player_name} joined the room`);
+                    break;
+                    
+                case 'player_left':
+                    players = message.players;
+                    // Remove from ready players
+                    readyPlayers.delete(message.player_name);
+                    updatePlayersList();
+                    addChatMessage('System', `${message.player_name} left the room`);
+                    break;
+                    
+                case 'chat':
+                    addChatMessage(message.player, message.message);
+                    addGameChatMessage(message.player, message.message);
+                    break;
+                    
+                case 'player_ready':
+                    if (message.is_ready) {
+                        readyPlayers.add(message.player);
+                    } else {
+                        readyPlayers.delete(message.player);
+                    }
+                    updatePlayersList();
+                    addChatMessage('System', `${message.player} is ${message.is_ready ? 'ready' : 'not ready'}`);
+                    break;
+                    
+                case 'game_start':
+                    addChatMessage('System', 'All players are ready! Game is starting...');
+                    addGameChatMessage('System', 'Game is starting! Get ready to play.');
+                    
+                    // Hide room card, show game card
+                    roomCard.classList.add('hidden');
+                    gameCard.classList.remove('hidden');
+                    break;
+                    
+                case 'game_state':
+                    gameState = message.state;
+                    updateGameBoard();
+                    break;
+                    
+                case 'game_action':
+                    addGameChatMessage('Game', `${message.player} performed action: ${JSON.stringify(message.action)}`);
+                    break;
+                    
+                case 'error':
+                    addChatMessage('Error', message.message);
+                    addGameChatMessage('Error', message.message);
+                    break;
+            }
+        }
+
+        function updatePlayersList() {
+            playersContainer.innerHTML = '';
+            
+            players.forEach(player => {
+                const playerElement = document.createElement('div');
+                playerElement.className = 'player';
+                
+                if (readyPlayers.has(player)) {
+                    playerElement.classList.add('ready');
+                    playerElement.textContent = `${player} (Ready)`;
+                } else {
+                    playerElement.textContent = player;
+                }
+                
+                playersContainer.appendChild(playerElement);
+            });
+        }
+
+        function updateGameBoard() {
+            if (!gameState) return;
+            
+            // Update turn and current player display
+            turnDisplay.textContent = gameState.turn_number;
+            currentPlayerDisplay.textContent = gameState.current_player || '-';
+            
+            // Clear game board
+            gameBoard.innerHTML = '';
+            
+            // Add player cards
+            gameState.players.forEach(player => {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'player-card';
+                
+                // Add current player indicator
+                if (player.name === gameState.current_player) {
+                    playerCard.classList.add('current');
+                }
+                
+                // Add dead player indicator
+                if (!player.is_alive) {
+                    playerCard.classList.add('dead');
+                }
+                
+                // Add player name
+                const playerName = document.createElement('h3');
+                playerName.textContent = player.name;
+                playerCard.appendChild(playerName);
+                
+                // Add player coins
+                const playerCoins = document.createElement('div');
+                playerCoins.className = 'player-coins';
+                playerCoins.textContent = `${player.coins} coins`;
+                playerCard.appendChild(playerCoins);
+                
+                // Add player cards
+                const playerCards = document.createElement('div');
+                playerCards.className = 'player-cards';
+                
+                // Add character cards
+                player.cards.forEach(card => {
+                    const characterCard = document.createElement('div');
+                    characterCard.className = 'character-card';
+                    
+                    if (card === 'hidden') {
+                        characterCard.classList.add('hidden');
+                        characterCard.textContent = '?';
+                    } else {
+                        characterCard.textContent = card;
+                    }
+                    
+                    playerCards.appendChild(characterCard);
+                });
+                
+                // Add revealed cards
+                player.revealed_cards.forEach(card => {
+                    const characterCard = document.createElement('div');
+                    characterCard.className = 'character-card revealed';
+                    characterCard.textContent = card;
+                    playerCards.appendChild(characterCard);
+                });
+                
+                playerCard.appendChild(playerCards);
+                gameBoard.appendChild(playerCard);
+            });
+            
+            // Update game actions
+            updateGameActions();
+        }
+        
+        function updateGameActions() {
+            // Clear game actions
+            gameActions.innerHTML = '';
+            
+            // Only show actions if it's the player's turn
+            if (gameState && gameState.is_your_turn) {
+                // Add income action
+                const incomeBtn = document.createElement('button');
+                incomeBtn.className = 'action-btn';
+                incomeBtn.textContent = 'Income (+1 coin)';
+                incomeBtn.addEventListener('click', () => performGameAction('income'));
+                gameActions.appendChild(incomeBtn);
+                
+                // Add foreign aid action
+                const foreignAidBtn = document.createElement('button');
+                foreignAidBtn.className = 'action-btn';
+                foreignAidBtn.textContent = 'Foreign Aid (+2 coins)';
+                foreignAidBtn.addEventListener('click', () => performGameAction('foreign_aid'));
+                gameActions.appendChild(foreignAidBtn);
+                
+                // Add coup action (if player has 7+ coins)
+                const currentPlayer = gameState.players.find(p => p.name === gameState.current_player);
+                if (currentPlayer && currentPlayer.coins >= 7) {
+                    const coupBtn = document.createElement('button');
+                    coupBtn.className = 'action-btn';
+                    coupBtn.textContent = 'Coup (7 coins)';
+                    coupBtn.addEventListener('click', () => {
+                        // Show target selection
+                        const targetSelection = document.createElement('div');
+                        targetSelection.className = 'target-selection';
+                        targetSelection.innerHTML = '<p>Select a target:</p>';
+                        
+                        const targetList = document.createElement('div');
+                        gameState.players.forEach(player => {
+                            if (player.name !== gameState.current_player && player.is_alive) {
+                                const targetBtn = document.createElement('button');
+                                targetBtn.className = 'target-btn';
+                                targetBtn.textContent = player.name;
+                                targetBtn.addEventListener('click', () => performGameAction('coup', { target: player.name }));
+                                targetList.appendChild(targetBtn);
+                            }
+                        });
+                        
+                        targetSelection.appendChild(targetList);
+                        gameActions.innerHTML = '';
+                        gameActions.appendChild(targetSelection);
+                    });
+                    gameActions.appendChild(coupBtn);
+                }
+                
+                // Add character-specific actions
+                // These would be based on the player's cards
+                // For simplicity, we'll just add all possible actions
+                
+                // Duke action (tax)
+                const taxBtn = document.createElement('button');
+                taxBtn.className = 'action-btn';
+                taxBtn.textContent = 'Tax (+3 coins, Duke)';
+                taxBtn.addEventListener('click', () => performGameAction('tax'));
+                gameActions.appendChild(taxBtn);
+                
+                // Assassin action (assassinate)
+                if (currentPlayer && currentPlayer.coins >= 3) {
+                    const assassinateBtn = document.createElement('button');
+                    assassinateBtn.className = 'action-btn';
+                    assassinateBtn.textContent = 'Assassinate (3 coins, Assassin)';
+                    assassinateBtn.addEventListener('click', () => {
+                        // Show target selection
+                        const targetSelection = document.createElement('div');
+                        targetSelection.className = 'target-selection';
+                        targetSelection.innerHTML = '<p>Select a target:</p>';
+                        
+                        const targetList = document.createElement('div');
+                        gameState.players.forEach(player => {
+                            if (player.name !== gameState.current_player && player.is_alive) {
+                                const targetBtn = document.createElement('button');
+                                targetBtn.className = 'target-btn';
+                                targetBtn.textContent = player.name;
+                                targetBtn.addEventListener('click', () => performGameAction('assassinate', { target: player.name }));
+                                targetList.appendChild(targetBtn);
+                            }
+                        });
+                        
+                        targetSelection.appendChild(targetList);
+                        gameActions.innerHTML = '';
+                        gameActions.appendChild(targetSelection);
+                    });
+                    gameActions.appendChild(assassinateBtn);
+                }
+                
+                // Captain action (steal)
+                const stealBtn = document.createElement('button');
+                stealBtn.className = 'action-btn';
+                stealBtn.textContent = 'Steal (2 coins, Captain)';
+                stealBtn.addEventListener('click', () => {
+                    // Show target selection
+                    const targetSelection = document.createElement('div');
+                    targetSelection.className = 'target-selection';
+                    targetSelection.innerHTML = '<p>Select a target:</p>';
+                    
+                    const targetList = document.createElement('div');
+                    gameState.players.forEach(player => {
+                        if (player.name !== gameState.current_player && player.is_alive) {
+                            const targetBtn = document.createElement('button');
+                            targetBtn.className = 'target-btn';
+                            targetBtn.textContent = player.name;
+                            targetBtn.addEventListener('click', () => performGameAction('steal', { target: player.name }));
+                            targetList.appendChild(targetBtn);
+                        }
+                    });
+                    
+                    targetSelection.appendChild(targetList);
+                    gameActions.innerHTML = '';
+                    gameActions.appendChild(targetSelection);
+                });
+                gameActions.appendChild(stealBtn);
+                
+                // Ambassador action (exchange)
+                const exchangeBtn = document.createElement('button');
+                exchangeBtn.className = 'action-btn';
+                exchangeBtn.textContent = 'Exchange (Ambassador)';
+                exchangeBtn.addEventListener('click', () => performGameAction('exchange'));
+                gameActions.appendChild(exchangeBtn);
+            }
+        }
+        
+        function performGameAction(action, params = {}) {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    type: 'game_action',
+                    action: {
+                        type: action,
+                        ...params
+                    }
+                }));
+            }
+        }
+
+        function toggleReady() {
+            isReady = !isReady;
+            readyBtn.textContent = isReady ? "I'm Not Ready" : "I'm Ready";
+            
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    type: 'ready',
+                    ready: isReady
+                }));
+            }
+        }
+
+        function sendChatMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+            
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    type: 'chat',
+                    message: message
+                }));
+                
+                chatInput.value = '';
+            }
+        }
+        
+        function sendGameChatMessage() {
+            const message = gameChatInput.value.trim();
+            if (!message) return;
+            
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    type: 'chat',
+                    message: message
+                }));
+                
+                gameChatInput.value = '';
+            }
+        }
+
+        function addChatMessage(sender, message) {
+            const messageElement = document.createElement('div');
+            messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            chatMessages.appendChild(messageElement);
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function addGameChatMessage(sender, message) {
+            const messageElement = document.createElement('div');
+            messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            gameChatMessages.appendChild(messageElement);
+            
+            // Scroll to bottom
+            gameChatMessages.scrollTop = gameChatMessages.scrollHeight;
+        }
+    </script>
+</body>
+</html> 
