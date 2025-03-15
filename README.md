@@ -45,13 +45,12 @@ The game uses WebSocket for real-time communication. Here are the main message t
 - `chat`: Send chat messages
 - `ready`: Mark yourself as ready to start the game
 - `game_action`: Perform a game action
-  - `perform_action`: Take an action (income, foreign aid, coup, etc.)
-  - `challenge`: Challenge another player's action
-  - `pass_challenge`: Pass on challenging
-  - `counter`: Counter an action
-  - `pass_counter`: Pass on countering
-  - `complete_exchange`: Complete an exchange action
-
+    - `perform_action`: Take an action (income, foreign aid, coup, etc.)
+    - `challenge`: Challenge another player's action
+    - `pass_challenge`: Pass on challenging
+    - `counter`: Counter an action
+    - `pass_counter`: Pass on countering
+    - `complete_exchange`: Complete an exchange action
 
 ```bash
 uv sync
@@ -59,10 +58,10 @@ uv run -m app.main
 ```
 
 ### Frontend
- 
+
 ```bash
 npm install
-npm run dev 
+npm run dev
 ```
 
 ### Database

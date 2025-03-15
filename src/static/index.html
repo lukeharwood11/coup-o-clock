@@ -1,1104 +1,1179 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coup O' Clock - Room Test</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .card {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .hidden {
-            display: none;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input, button {
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #chat-messages {
-            height: 300px;
-            overflow-y: auto;
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-        .player-list {
-            margin-bottom: 15px;
-        }
-        .player {
-            padding: 5px;
-            margin: 5px 0;
-            background-color: #f1f1f1;
-            border-radius: 3px;
-        }
-        .ready {
-            background-color: #c8e6c9;
-        }
-        .game-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .game-board {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-        }
-        .player-card {
-            width: 200px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            background-color: #f9f9f9;
-        }
-        .player-card.current {
-            border: 2px solid #4CAF50;
-            background-color: #e8f5e9;
-        }
-        .player-card.dead {
-            opacity: 0.5;
-        }
-        .player-card h3 {
-            margin-top: 0;
-            text-align: center;
-        }
-        .player-coins {
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        .player-cards {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-        }
-        .character-card {
-            width: 60px;
-            height: 90px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: white;
-            font-size: 12px;
-            text-align: center;
-        }
-        .character-card.revealed {
-            background-color: #ffcdd2;
-            text-decoration: line-through;
-        }
-        .character-card.hidden {
-            background-color: #3f51b5;
-            color: white;
-            display: flex;
-        }
-        .game-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .action-btn {
-            padding: 8px 16px;
-        }
-        .game-info {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        
-        /* Challenge and counteraction styles */
-        .challenge-options,
-        .counter-options,
-        .exchange-options {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 15px;
-            margin-top: 15px;
-            background-color: #f9f9f9;
-        }
-        
-        .challenge-options h3,
-        .counter-options h3,
-        .exchange-options h3 {
-            margin-top: 0;
-            text-align: center;
-            color: #d32f2f;
-        }
-        
-        .card-selection {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .character-card.selectable {
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .character-card.selectable:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
-        }
-        
-        .character-card.selected {
-            border: 2px solid #4CAF50;
-            background-color: #e8f5e9;
-        }
-        
-        .target-selection {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="card" id="join-card">
-            <h2>Coup O' Clock</h2>
-            <div class="form-group">
-                <label for="player-name">Your Name:</label>
-                <input type="text" id="player-name" placeholder="Enter your name">
-            </div>
-            <div class="form-group">
-                <button id="create-room-btn">Create New Room</button>
-                <p>- OR -</p>
-                <label for="room-code">Join Existing Room:</label>
-                <input type="text" id="room-code" placeholder="Enter room code">
-                <button id="join-room-btn">Join Room</button>
-            </div>
-        </div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Coup O' Clock - Room Test</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            .container {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+            .card {
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 20px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+            .hidden {
+                display: none;
+            }
+            .form-group {
+                margin-bottom: 15px;
+            }
+            label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+            input,
+            button {
+                padding: 8px;
+                border-radius: 4px;
+                border: 1px solid #ccc;
+            }
+            button {
+                background-color: #4caf50;
+                color: white;
+                border: none;
+                cursor: pointer;
+            }
+            button:hover {
+                background-color: #45a049;
+            }
+            #chat-messages {
+                height: 300px;
+                overflow-y: auto;
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            .player-list {
+                margin-bottom: 15px;
+            }
+            .player {
+                padding: 5px;
+                margin: 5px 0;
+                background-color: #f1f1f1;
+                border-radius: 3px;
+            }
+            .ready {
+                background-color: #c8e6c9;
+            }
+            .game-container {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+            .game-board {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                justify-content: center;
+            }
+            .player-card {
+                width: 200px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 10px;
+                background-color: #f9f9f9;
+            }
+            .player-card.current {
+                border: 2px solid #4caf50;
+                background-color: #e8f5e9;
+            }
+            .player-card.dead {
+                opacity: 0.5;
+            }
+            .player-card h3 {
+                margin-top: 0;
+                text-align: center;
+            }
+            .player-coins {
+                font-weight: bold;
+                text-align: center;
+                margin-bottom: 10px;
+            }
+            .player-cards {
+                display: flex;
+                justify-content: center;
+                gap: 5px;
+            }
+            .character-card {
+                width: 60px;
+                height: 90px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: white;
+                font-size: 12px;
+                text-align: center;
+            }
+            .character-card.revealed {
+                background-color: #ffcdd2;
+                text-decoration: line-through;
+            }
+            .character-card.hidden {
+                background-color: #3f51b5;
+                color: white;
+                display: flex;
+            }
+            .game-actions {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                justify-content: center;
+                margin-top: 20px;
+            }
+            .action-btn {
+                padding: 8px 16px;
+            }
+            .game-info {
+                text-align: center;
+                margin-bottom: 10px;
+            }
 
-        <div class="card hidden" id="room-card">
-            <h2>Room: <span id="room-code-display"></span></h2>
-            <div class="player-list">
-                <h3>Players:</h3>
-                <div id="players-container"></div>
-            </div>
-            <div id="ready-container">
-                <button id="ready-btn">I'm Ready</button>
-            </div>
-            <div id="chat-container">
-                <h3>Chat:</h3>
-                <div id="chat-messages"></div>
+            /* Challenge and counteraction styles */
+            .challenge-options,
+            .counter-options,
+            .exchange-options {
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 15px;
+                margin-top: 15px;
+                background-color: #f9f9f9;
+            }
+
+            .challenge-options h3,
+            .counter-options h3,
+            .exchange-options h3 {
+                margin-top: 0;
+                text-align: center;
+                color: #d32f2f;
+            }
+
+            .card-selection {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+                margin: 15px 0;
+            }
+
+            .character-card.selectable {
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .character-card.selectable:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            }
+
+            .character-card.selected {
+                border: 2px solid #4caf50;
+                background-color: #e8f5e9;
+            }
+
+            .target-selection {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="card" id="join-card">
+                <h2>Coup O' Clock</h2>
                 <div class="form-group">
-                    <input type="text" id="chat-input" placeholder="Type a message...">
-                    <button id="send-chat-btn">Send</button>
+                    <label for="player-name">Your Name:</label>
+                    <input type="text" id="player-name" placeholder="Enter your name" />
+                </div>
+                <div class="form-group">
+                    <button id="create-room-btn">Create New Room</button>
+                    <p>- OR -</p>
+                    <label for="room-code">Join Existing Room:</label>
+                    <input type="text" id="room-code" placeholder="Enter room code" />
+                    <button id="join-room-btn">Join Room</button>
+                </div>
+            </div>
+
+            <div class="card hidden" id="room-card">
+                <h2>Room: <span id="room-code-display"></span></h2>
+                <div class="player-list">
+                    <h3>Players:</h3>
+                    <div id="players-container"></div>
+                </div>
+                <div id="ready-container">
+                    <button id="ready-btn">I'm Ready</button>
+                </div>
+                <div id="chat-container">
+                    <h3>Chat:</h3>
+                    <div id="chat-messages"></div>
+                    <div class="form-group">
+                        <input type="text" id="chat-input" placeholder="Type a message..." />
+                        <button id="send-chat-btn">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card hidden" id="game-card">
+                <h2>Game in Progress</h2>
+                <div class="game-info">
+                    <p>
+                        Turn: <span id="turn-display">1</span> | Current Player:
+                        <span id="current-player-display">-</span>
+                    </p>
+                </div>
+                <div class="game-board" id="game-board">
+                    <!-- Player cards will be added here -->
+                </div>
+                <div class="game-actions" id="game-actions">
+                    <!-- Action buttons will be added here when it's the player's turn -->
+                </div>
+                <div id="game-chat-container">
+                    <h3>Game Chat:</h3>
+                    <div id="game-chat-messages"></div>
+                    <div class="form-group">
+                        <input type="text" id="game-chat-input" placeholder="Type a message..." />
+                        <button id="game-send-chat-btn">Send</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="card hidden" id="game-card">
-            <h2>Game in Progress</h2>
-            <div class="game-info">
-                <p>Turn: <span id="turn-display">1</span> | Current Player: <span id="current-player-display">-</span></p>
-            </div>
-            <div class="game-board" id="game-board">
-                <!-- Player cards will be added here -->
-            </div>
-            <div class="game-actions" id="game-actions">
-                <!-- Action buttons will be added here when it's the player's turn -->
-            </div>
-            <div id="game-chat-container">
-                <h3>Game Chat:</h3>
-                <div id="game-chat-messages"></div>
-                <div class="form-group">
-                    <input type="text" id="game-chat-input" placeholder="Type a message...">
-                    <button id="game-send-chat-btn">Send</button>
-                </div>
-            </div>
-        </div>
-    </div>
+        <script>
+            // DOM Elements
+            const joinCard = document.getElementById('join-card');
+            const roomCard = document.getElementById('room-card');
+            const gameCard = document.getElementById('game-card');
+            const playerNameInput = document.getElementById('player-name');
+            const roomCodeInput = document.getElementById('room-code');
+            const createRoomBtn = document.getElementById('create-room-btn');
+            const joinRoomBtn = document.getElementById('join-room-btn');
+            const roomCodeDisplay = document.getElementById('room-code-display');
+            const playersContainer = document.getElementById('players-container');
+            const readyBtn = document.getElementById('ready-btn');
+            const chatMessages = document.getElementById('chat-messages');
+            const chatInput = document.getElementById('chat-input');
+            const sendChatBtn = document.getElementById('send-chat-btn');
+            const turnDisplay = document.getElementById('turn-display');
+            const currentPlayerDisplay = document.getElementById('current-player-display');
+            const gameBoard = document.getElementById('game-board');
+            const gameActions = document.getElementById('game-actions');
+            const gameChatMessages = document.getElementById('game-chat-messages');
+            const gameChatInput = document.getElementById('game-chat-input');
+            const gameSendChatBtn = document.getElementById('game-send-chat-btn');
 
-    <script>
-        // DOM Elements
-        const joinCard = document.getElementById('join-card');
-        const roomCard = document.getElementById('room-card');
-        const gameCard = document.getElementById('game-card');
-        const playerNameInput = document.getElementById('player-name');
-        const roomCodeInput = document.getElementById('room-code');
-        const createRoomBtn = document.getElementById('create-room-btn');
-        const joinRoomBtn = document.getElementById('join-room-btn');
-        const roomCodeDisplay = document.getElementById('room-code-display');
-        const playersContainer = document.getElementById('players-container');
-        const readyBtn = document.getElementById('ready-btn');
-        const chatMessages = document.getElementById('chat-messages');
-        const chatInput = document.getElementById('chat-input');
-        const sendChatBtn = document.getElementById('send-chat-btn');
-        const turnDisplay = document.getElementById('turn-display');
-        const currentPlayerDisplay = document.getElementById('current-player-display');
-        const gameBoard = document.getElementById('game-board');
-        const gameActions = document.getElementById('game-actions');
-        const gameChatMessages = document.getElementById('game-chat-messages');
-        const gameChatInput = document.getElementById('game-chat-input');
-        const gameSendChatBtn = document.getElementById('game-send-chat-btn');
+            // State
+            let socket = null;
+            let playerName = '';
+            let playerId = '';
+            let roomCode = '';
+            let isReady = false;
+            let players = [];
+            let readyPlayers = new Set();
+            let gameState = null;
 
-        // State
-        let socket = null;
-        let playerName = '';
-        let playerId = '';
-        let roomCode = '';
-        let isReady = false;
-        let players = [];
-        let readyPlayers = new Set();
-        let gameState = null;
-
-        // Event Listeners
-        createRoomBtn.addEventListener('click', createRoom);
-        joinRoomBtn.addEventListener('click', joinRoom);
-        readyBtn.addEventListener('click', toggleReady);
-        sendChatBtn.addEventListener('click', sendChatMessage);
-        gameSendChatBtn.addEventListener('click', sendGameChatMessage);
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendChatMessage();
-            }
-        });
-        gameChatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendGameChatMessage();
-            }
-        });
-
-        // Functions
-        function createRoom() {
-            playerName = playerNameInput.value.trim();
-            if (!playerName) {
-                alert('Please enter your name');
-                return;
-            }
-
-            connectToRoom('new', true);
-        }
-
-        function joinRoom() {
-            playerName = playerNameInput.value.trim();
-            roomCode = roomCodeInput.value.trim().toUpperCase();
-            
-            if (!playerName) {
-                alert('Please enter your name');
-                return;
-            }
-            
-            if (!roomCode) {
-                alert('Please enter a room code');
-                return;
-            }
-
-            connectToRoom(roomCode, false);
-        }
-
-        function connectToRoom(code, isCreate) {
-            // Close existing socket if any
-            if (socket) {
-                socket.close();
-            }
-
-            // Create WebSocket connection
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsUrl = `${protocol}//${window.location.host}/ws/room/${code}?player_name=${encodeURIComponent(playerName)}&create=${isCreate}`;
-            
-            socket = new WebSocket(wsUrl);
-            
-            socket.onopen = () => {
-                console.log('Connected to room');
-            };
-            
-            socket.onmessage = (event) => {
-                handleMessage(JSON.parse(event.data));
-            };
-            
-            socket.onclose = (event) => {
-                console.log('Disconnected from room', event.code, event.reason);
-                if (event.code === 4000) {
-                    alert('Room already exists. Please try a different code.');
-                } else if (event.code !== 1000) {
-                    alert(`Connection closed: ${event.reason || 'Unknown reason'}`);
+            // Event Listeners
+            createRoomBtn.addEventListener('click', createRoom);
+            joinRoomBtn.addEventListener('click', joinRoom);
+            readyBtn.addEventListener('click', toggleReady);
+            sendChatBtn.addEventListener('click', sendChatMessage);
+            gameSendChatBtn.addEventListener('click', sendGameChatMessage);
+            chatInput.addEventListener('keypress', e => {
+                if (e.key === 'Enter') {
+                    sendChatMessage();
                 }
-                
-                // Reset UI
-                joinCard.classList.remove('hidden');
-                roomCard.classList.add('hidden');
-                gameCard.classList.add('hidden');
-            };
-            
-            socket.onerror = (error) => {
-                console.error('WebSocket error:', error);
-                alert('Error connecting to room');
-            };
-        }
+            });
+            gameChatInput.addEventListener('keypress', e => {
+                if (e.key === 'Enter') {
+                    sendGameChatMessage();
+                }
+            });
 
-        function handleMessage(message) {
-            console.log('Received message:', message);
-            
-            switch (message.type) {
-                case 'room_joined':
-                    roomCode = message.room_code;
-                    players = message.players;
-                    playerId = message.player_id;
-                    
-                    // Update UI
-                    roomCodeDisplay.textContent = roomCode;
-                    updatePlayersList();
-                    
-                    // Show room card, hide join card
-                    joinCard.classList.add('hidden');
-                    roomCard.classList.remove('hidden');
-                    
-                    // Add system message
-                    addChatMessage('System', `You joined room ${roomCode}`);
-                    break;
-                    
-                case 'player_joined':
-                    players = message.players;
-                    updatePlayersList();
-                    addChatMessage('System', `${message.player_name} joined the room`);
-                    break;
-                    
-                case 'player_left':
-                    players = message.players;
-                    // Remove from ready players
-                    readyPlayers.delete(message.player_name);
-                    updatePlayersList();
-                    addChatMessage('System', `${message.player_name} left the room`);
-                    break;
-                    
-                case 'chat':
-                    addChatMessage(message.player, message.message);
-                    addGameChatMessage(message.player, message.message);
-                    break;
-                    
-                case 'player_ready':
-                    if (message.is_ready) {
-                        readyPlayers.add(message.player);
-                    } else {
-                        readyPlayers.delete(message.player);
+            // Functions
+            function createRoom() {
+                playerName = playerNameInput.value.trim();
+                if (!playerName) {
+                    alert('Please enter your name');
+                    return;
+                }
+
+                connectToRoom('new', true);
+            }
+
+            function joinRoom() {
+                playerName = playerNameInput.value.trim();
+                roomCode = roomCodeInput.value.trim().toUpperCase();
+
+                if (!playerName) {
+                    alert('Please enter your name');
+                    return;
+                }
+
+                if (!roomCode) {
+                    alert('Please enter a room code');
+                    return;
+                }
+
+                connectToRoom(roomCode, false);
+            }
+
+            function connectToRoom(code, isCreate) {
+                // Close existing socket if any
+                if (socket) {
+                    socket.close();
+                }
+
+                // Create WebSocket connection
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl = `${protocol}//${window.location.host}/ws/room/${code}?player_name=${encodeURIComponent(playerName)}&create=${isCreate}`;
+
+                socket = new WebSocket(wsUrl);
+
+                socket.onopen = () => {
+                    console.log('Connected to room');
+                };
+
+                socket.onmessage = event => {
+                    handleMessage(JSON.parse(event.data));
+                };
+
+                socket.onclose = event => {
+                    console.log('Disconnected from room', event.code, event.reason);
+                    if (event.code === 4000) {
+                        alert('Room already exists. Please try a different code.');
+                    } else if (event.code !== 1000) {
+                        alert(`Connection closed: ${event.reason || 'Unknown reason'}`);
                     }
-                    updatePlayersList();
-                    addChatMessage('System', `${message.player} is ${message.is_ready ? 'ready' : 'not ready'}`);
-                    break;
-                    
-                case 'game_start':
-                    addChatMessage('System', 'All players are ready! Game is starting...');
-                    addGameChatMessage('System', 'Game is starting! Get ready to play.');
-                    
-                    // Hide room card, show game card
+
+                    // Reset UI
+                    joinCard.classList.remove('hidden');
                     roomCard.classList.add('hidden');
-                    gameCard.classList.remove('hidden');
-                    
-                    console.log('Game start message received:', message);
-                    break;
-                    
-                case 'game_state':
-                    console.log('Game state message received:', message);
-                    
-                    // Store the previous state to check for changes
-                    const prevChallengeWindow = gameState?.challenge_window_open;
-                    const prevCounteractionWindow = gameState?.counteraction_window_open;
-                    
-                    // Update game state
-                    gameState = message.state;
-                    updateGameBoard();
-                    
-                    // If we're in the "Game is starting" state, update the game info
-                    if (gameState && gameState.status === "PLAYING") {
-                        // Clear the "Game is starting" message
-                        addGameChatMessage('System', `Game has started! It's ${gameState.current_player}'s turn.`);
-                        
-                        // Make sure the game card is visible
+                    gameCard.classList.add('hidden');
+                };
+
+                socket.onerror = error => {
+                    console.error('WebSocket error:', error);
+                    alert('Error connecting to room');
+                };
+            }
+
+            function handleMessage(message) {
+                console.log('Received message:', message);
+
+                switch (message.type) {
+                    case 'room_joined':
+                        roomCode = message.room_code;
+                        players = message.players;
+                        playerId = message.player_id;
+
+                        // Update UI
+                        roomCodeDisplay.textContent = roomCode;
+                        updatePlayersList();
+
+                        // Show room card, hide join card
+                        joinCard.classList.add('hidden');
+                        roomCard.classList.remove('hidden');
+
+                        // Add system message
+                        addChatMessage('System', `You joined room ${roomCode}`);
+                        break;
+
+                    case 'player_joined':
+                        players = message.players;
+                        updatePlayersList();
+                        addChatMessage('System', `${message.player_name} joined the room`);
+                        break;
+
+                    case 'player_left':
+                        players = message.players;
+                        // Remove from ready players
+                        readyPlayers.delete(message.player_name);
+                        updatePlayersList();
+                        addChatMessage('System', `${message.player_name} left the room`);
+                        break;
+
+                    case 'chat':
+                        addChatMessage(message.player, message.message);
+                        addGameChatMessage(message.player, message.message);
+                        break;
+
+                    case 'player_ready':
+                        if (message.is_ready) {
+                            readyPlayers.add(message.player);
+                        } else {
+                            readyPlayers.delete(message.player);
+                        }
+                        updatePlayersList();
+                        addChatMessage(
+                            'System',
+                            `${message.player} is ${message.is_ready ? 'ready' : 'not ready'}`
+                        );
+                        break;
+
+                    case 'game_start':
+                        addChatMessage('System', 'All players are ready! Game is starting...');
+                        addGameChatMessage('System', 'Game is starting! Get ready to play.');
+
+                        // Hide room card, show game card
                         roomCard.classList.add('hidden');
                         gameCard.classList.remove('hidden');
-                        
-                        // Check if there's a challenge or counteraction window open
-                        if (gameState.challenge_window_open) {
-                            console.log('Challenge window is open');
-                            showChallengeOptions();
-                        }
-                        
-                        if (gameState.counteraction_window_open) {
-                            console.log('Counteraction window is open');
-                            showCounteractionOptions();
-                        }
-                        
-                        // If a window was just opened, add a notification
-                        if (!prevChallengeWindow && gameState.challenge_window_open) {
-                            addGameChatMessage('System', 'A challenge window has opened!');
-                        }
-                        
-                        if (!prevCounteractionWindow && gameState.counteraction_window_open) {
-                            addGameChatMessage('System', 'A counteraction window has opened!');
-                        }
-                    } else {
-                        console.error('Game state is not PLAYING:', gameState);
-                    }
-                    break;
-                    
-                case 'game_action':
-                    addGameChatMessage('Game', `${message.player} performed action: ${JSON.stringify(message.action)}`);
-                    break;
-                    
-                case 'game_action_result':
-                    addGameChatMessage('Game', `${message.player} action result: ${message.result.message || JSON.stringify(message.result)}`);
-                    console.log('Game action result:', message.result);
-                    
-                    // If the action result includes a game state update, update the game state
-                    if (message.result.state) {
-                        console.log('Action result includes state update:', message.result.state);
-                        
-                        // If the state is challenge_window, show challenge options
-                        if (message.result.state === 'challenge_window') {
-                            console.log('Opening challenge window from action result');
-                            // Force the challenge window to open immediately
-                            setTimeout(() => {
+
+                        console.log('Game start message received:', message);
+                        break;
+
+                    case 'game_state':
+                        console.log('Game state message received:', message);
+
+                        // Store the previous state to check for changes
+                        const prevChallengeWindow = gameState?.challenge_window_open;
+                        const prevCounteractionWindow = gameState?.counteraction_window_open;
+
+                        // Update game state
+                        gameState = message.state;
+                        updateGameBoard();
+
+                        // If we're in the "Game is starting" state, update the game info
+                        if (gameState && gameState.status === 'PLAYING') {
+                            // Clear the "Game is starting" message
+                            addGameChatMessage(
+                                'System',
+                                `Game has started! It's ${gameState.current_player}'s turn.`
+                            );
+
+                            // Make sure the game card is visible
+                            roomCard.classList.add('hidden');
+                            gameCard.classList.remove('hidden');
+
+                            // Check if there's a challenge or counteraction window open
+                            if (gameState.challenge_window_open) {
+                                console.log('Challenge window is open');
                                 showChallengeOptions();
-                            }, 100);
-                        }
-                        
-                        // If the state is counteraction_window, show counteraction options
-                        if (message.result.state === 'counteraction_window') {
-                            console.log('Opening counteraction window from action result');
-                            // Force the counteraction window to open immediately
-                            setTimeout(() => {
+                            }
+
+                            if (gameState.counteraction_window_open) {
+                                console.log('Counteraction window is open');
                                 showCounteractionOptions();
-                            }, 100);
-                        }
-                        
-                        // If the state is exchange, show exchange options
-                        if (message.result.state === 'exchange') {
-                            console.log('Opening exchange window from action result');
-                            showExchangeOptions(message.result.cards);
-                        }
-                    }
-                    
-                    // If the game is over, show game over message
-                    if (message.result.game_over) {
-                        addGameChatMessage('System', 'Game over!');
-                    }
-                    break;
-                    
-                case 'error':
-                    addChatMessage('Error', message.message);
-                    addGameChatMessage('Error', message.message);
-                    break;
-            }
-        }
+                            }
 
-        function updatePlayersList() {
-            playersContainer.innerHTML = '';
-            
-            players.forEach(player => {
-                const playerElement = document.createElement('div');
-                playerElement.className = 'player';
-                
-                if (readyPlayers.has(player)) {
-                    playerElement.classList.add('ready');
-                    playerElement.textContent = `${player} (Ready)`;
-                } else {
-                    playerElement.textContent = player;
-                }
-                
-                playersContainer.appendChild(playerElement);
-            });
-        }
+                            // If a window was just opened, add a notification
+                            if (!prevChallengeWindow && gameState.challenge_window_open) {
+                                addGameChatMessage('System', 'A challenge window has opened!');
+                            }
 
-        function updateGameBoard() {
-            if (!gameState) {
-                console.error('Cannot update game board: gameState is null or undefined');
-                return;
+                            if (!prevCounteractionWindow && gameState.counteraction_window_open) {
+                                addGameChatMessage('System', 'A counteraction window has opened!');
+                            }
+                        } else {
+                            console.error('Game state is not PLAYING:', gameState);
+                        }
+                        break;
+
+                    case 'game_action':
+                        addGameChatMessage(
+                            'Game',
+                            `${message.player} performed action: ${JSON.stringify(message.action)}`
+                        );
+                        break;
+
+                    case 'game_action_result':
+                        addGameChatMessage(
+                            'Game',
+                            `${message.player} action result: ${message.result.message || JSON.stringify(message.result)}`
+                        );
+                        console.log('Game action result:', message.result);
+
+                        // If the action result includes a game state update, update the game state
+                        if (message.result.state) {
+                            console.log(
+                                'Action result includes state update:',
+                                message.result.state
+                            );
+
+                            // If the state is challenge_window, show challenge options
+                            if (message.result.state === 'challenge_window') {
+                                console.log('Opening challenge window from action result');
+                                // Force the challenge window to open immediately
+                                setTimeout(() => {
+                                    showChallengeOptions();
+                                }, 100);
+                            }
+
+                            // If the state is counteraction_window, show counteraction options
+                            if (message.result.state === 'counteraction_window') {
+                                console.log('Opening counteraction window from action result');
+                                // Force the counteraction window to open immediately
+                                setTimeout(() => {
+                                    showCounteractionOptions();
+                                }, 100);
+                            }
+
+                            // If the state is exchange, show exchange options
+                            if (message.result.state === 'exchange') {
+                                console.log('Opening exchange window from action result');
+                                showExchangeOptions(message.result.cards);
+                            }
+                        }
+
+                        // If the game is over, show game over message
+                        if (message.result.game_over) {
+                            addGameChatMessage('System', 'Game over!');
+                        }
+                        break;
+
+                    case 'error':
+                        addChatMessage('Error', message.message);
+                        addGameChatMessage('Error', message.message);
+                        break;
+                }
             }
-            
-            console.log('Updating game board with state:', gameState);
-            
-            // Update turn and current player display
-            turnDisplay.textContent = gameState.turn_number;
-            currentPlayerDisplay.textContent = gameState.current_player || '-';
-            
-            // Clear game board
-            gameBoard.innerHTML = '';
-            
-            // Add player cards
-            gameState.players.forEach(player => {
-                console.log('Adding player to game board:', player);
-                
-                const playerCard = document.createElement('div');
-                playerCard.className = 'player-card';
-                
-                // Add current player indicator
-                if (player.name === gameState.current_player) {
-                    playerCard.classList.add('current');
+
+            function updatePlayersList() {
+                playersContainer.innerHTML = '';
+
+                players.forEach(player => {
+                    const playerElement = document.createElement('div');
+                    playerElement.className = 'player';
+
+                    if (readyPlayers.has(player)) {
+                        playerElement.classList.add('ready');
+                        playerElement.textContent = `${player} (Ready)`;
+                    } else {
+                        playerElement.textContent = player;
+                    }
+
+                    playersContainer.appendChild(playerElement);
+                });
+            }
+
+            function updateGameBoard() {
+                if (!gameState) {
+                    console.error('Cannot update game board: gameState is null or undefined');
+                    return;
                 }
-                
-                // Add dead player indicator
-                if (!player.is_alive) {
-                    playerCard.classList.add('dead');
-                }
-                
-                // Add player name
-                const playerName = document.createElement('h3');
-                playerName.textContent = player.name;
-                playerCard.appendChild(playerName);
-                
-                // Add player coins
-                const playerCoins = document.createElement('div');
-                playerCoins.className = 'player-coins';
-                playerCoins.textContent = `${player.coins} coins`;
-                playerCard.appendChild(playerCoins);
-                
+
+                console.log('Updating game board with state:', gameState);
+
+                // Update turn and current player display
+                turnDisplay.textContent = gameState.turn_number;
+                currentPlayerDisplay.textContent = gameState.current_player || '-';
+
+                // Clear game board
+                gameBoard.innerHTML = '';
+
                 // Add player cards
-                const playerCards = document.createElement('div');
-                playerCards.className = 'player-cards';
-                
-                // Add character cards
-                player.cards.forEach(card => {
-                    const characterCard = document.createElement('div');
-                    characterCard.className = 'character-card';
-                    
-                    if (card === 'hidden') {
-                        characterCard.classList.add('hidden');
-                        characterCard.textContent = '?';
-                    } else {
+                gameState.players.forEach(player => {
+                    console.log('Adding player to game board:', player);
+
+                    const playerCard = document.createElement('div');
+                    playerCard.className = 'player-card';
+
+                    // Add current player indicator
+                    if (player.name === gameState.current_player) {
+                        playerCard.classList.add('current');
+                    }
+
+                    // Add dead player indicator
+                    if (!player.is_alive) {
+                        playerCard.classList.add('dead');
+                    }
+
+                    // Add player name
+                    const playerName = document.createElement('h3');
+                    playerName.textContent = player.name;
+                    playerCard.appendChild(playerName);
+
+                    // Add player coins
+                    const playerCoins = document.createElement('div');
+                    playerCoins.className = 'player-coins';
+                    playerCoins.textContent = `${player.coins} coins`;
+                    playerCard.appendChild(playerCoins);
+
+                    // Add player cards
+                    const playerCards = document.createElement('div');
+                    playerCards.className = 'player-cards';
+
+                    // Add character cards
+                    player.cards.forEach(card => {
+                        const characterCard = document.createElement('div');
+                        characterCard.className = 'character-card';
+
+                        if (card === 'hidden') {
+                            characterCard.classList.add('hidden');
+                            characterCard.textContent = '?';
+                        } else {
+                            characterCard.textContent = card;
+                        }
+
+                        playerCards.appendChild(characterCard);
+                    });
+
+                    // Add revealed cards
+                    player.revealed_cards.forEach(card => {
+                        const characterCard = document.createElement('div');
+                        characterCard.className = 'character-card revealed';
                         characterCard.textContent = card;
+                        playerCards.appendChild(characterCard);
+                    });
+
+                    playerCard.appendChild(playerCards);
+                    gameBoard.appendChild(playerCard);
+                });
+
+                // Update game actions
+                updateGameActions();
+            }
+
+            function updateGameActions() {
+                // Clear game actions
+                gameActions.innerHTML = '';
+
+                // Only show actions if it's the player's turn
+                if (gameState && gameState.is_your_turn) {
+                    // Add income action
+                    const incomeBtn = document.createElement('button');
+                    incomeBtn.className = 'action-btn';
+                    incomeBtn.textContent = 'Income (+1 coin)';
+                    incomeBtn.addEventListener('click', () => performGameAction('income'));
+                    gameActions.appendChild(incomeBtn);
+
+                    // Add foreign aid action
+                    const foreignAidBtn = document.createElement('button');
+                    foreignAidBtn.className = 'action-btn';
+                    foreignAidBtn.textContent = 'Foreign Aid (+2 coins)';
+                    foreignAidBtn.addEventListener('click', () => performGameAction('foreign_aid'));
+                    gameActions.appendChild(foreignAidBtn);
+
+                    // Add coup action (if player has 7+ coins)
+                    const currentPlayer = gameState.players.find(
+                        p => p.name === gameState.current_player
+                    );
+                    if (currentPlayer && currentPlayer.coins >= 7) {
+                        const coupBtn = document.createElement('button');
+                        coupBtn.className = 'action-btn';
+                        coupBtn.textContent = 'Coup (7 coins)';
+                        coupBtn.addEventListener('click', () => {
+                            // Show target selection
+                            const targetSelection = document.createElement('div');
+                            targetSelection.className = 'target-selection';
+                            targetSelection.innerHTML = '<p>Select a target:</p>';
+
+                            const targetList = document.createElement('div');
+                            gameState.players.forEach(player => {
+                                if (player.name !== gameState.current_player && player.is_alive) {
+                                    const targetBtn = document.createElement('button');
+                                    targetBtn.className = 'target-btn';
+                                    targetBtn.textContent = player.name;
+                                    targetBtn.addEventListener('click', () =>
+                                        performGameAction('coup', { target: player.name })
+                                    );
+                                    targetList.appendChild(targetBtn);
+                                }
+                            });
+
+                            targetSelection.appendChild(targetList);
+                            gameActions.innerHTML = '';
+                            gameActions.appendChild(targetSelection);
+                        });
+                        gameActions.appendChild(coupBtn);
                     }
-                    
-                    playerCards.appendChild(characterCard);
-                });
-                
-                // Add revealed cards
-                player.revealed_cards.forEach(card => {
-                    const characterCard = document.createElement('div');
-                    characterCard.className = 'character-card revealed';
-                    characterCard.textContent = card;
-                    playerCards.appendChild(characterCard);
-                });
-                
-                playerCard.appendChild(playerCards);
-                gameBoard.appendChild(playerCard);
-            });
-            
-            // Update game actions
-            updateGameActions();
-        }
-        
-        function updateGameActions() {
-            // Clear game actions
-            gameActions.innerHTML = '';
-            
-            // Only show actions if it's the player's turn
-            if (gameState && gameState.is_your_turn) {
-                // Add income action
-                const incomeBtn = document.createElement('button');
-                incomeBtn.className = 'action-btn';
-                incomeBtn.textContent = 'Income (+1 coin)';
-                incomeBtn.addEventListener('click', () => performGameAction('income'));
-                gameActions.appendChild(incomeBtn);
-                
-                // Add foreign aid action
-                const foreignAidBtn = document.createElement('button');
-                foreignAidBtn.className = 'action-btn';
-                foreignAidBtn.textContent = 'Foreign Aid (+2 coins)';
-                foreignAidBtn.addEventListener('click', () => performGameAction('foreign_aid'));
-                gameActions.appendChild(foreignAidBtn);
-                
-                // Add coup action (if player has 7+ coins)
-                const currentPlayer = gameState.players.find(p => p.name === gameState.current_player);
-                if (currentPlayer && currentPlayer.coins >= 7) {
-                    const coupBtn = document.createElement('button');
-                    coupBtn.className = 'action-btn';
-                    coupBtn.textContent = 'Coup (7 coins)';
-                    coupBtn.addEventListener('click', () => {
+
+                    // Add character-specific actions
+                    // These would be based on the player's cards
+                    // For simplicity, we'll just add all possible actions
+
+                    // Duke action (tax)
+                    const taxBtn = document.createElement('button');
+                    taxBtn.className = 'action-btn';
+                    taxBtn.textContent = 'Tax (+3 coins, Duke)';
+                    taxBtn.addEventListener('click', () => performGameAction('tax'));
+                    gameActions.appendChild(taxBtn);
+
+                    // Assassin action (assassinate)
+                    if (currentPlayer && currentPlayer.coins >= 3) {
+                        const assassinateBtn = document.createElement('button');
+                        assassinateBtn.className = 'action-btn';
+                        assassinateBtn.textContent = 'Assassinate (3 coins, Assassin)';
+                        assassinateBtn.addEventListener('click', () => {
+                            // Show target selection
+                            const targetSelection = document.createElement('div');
+                            targetSelection.className = 'target-selection';
+                            targetSelection.innerHTML = '<p>Select a target:</p>';
+
+                            const targetList = document.createElement('div');
+                            gameState.players.forEach(player => {
+                                if (player.name !== gameState.current_player && player.is_alive) {
+                                    const targetBtn = document.createElement('button');
+                                    targetBtn.className = 'target-btn';
+                                    targetBtn.textContent = player.name;
+                                    targetBtn.addEventListener('click', () =>
+                                        performGameAction('assassinate', { target: player.name })
+                                    );
+                                    targetList.appendChild(targetBtn);
+                                }
+                            });
+
+                            targetSelection.appendChild(targetList);
+                            gameActions.innerHTML = '';
+                            gameActions.appendChild(targetSelection);
+                        });
+                        gameActions.appendChild(assassinateBtn);
+                    }
+
+                    // Captain action (steal)
+                    const stealBtn = document.createElement('button');
+                    stealBtn.className = 'action-btn';
+                    stealBtn.textContent = 'Steal (2 coins, Captain)';
+                    stealBtn.addEventListener('click', () => {
                         // Show target selection
                         const targetSelection = document.createElement('div');
                         targetSelection.className = 'target-selection';
                         targetSelection.innerHTML = '<p>Select a target:</p>';
-                        
+
                         const targetList = document.createElement('div');
                         gameState.players.forEach(player => {
                             if (player.name !== gameState.current_player && player.is_alive) {
                                 const targetBtn = document.createElement('button');
                                 targetBtn.className = 'target-btn';
                                 targetBtn.textContent = player.name;
-                                targetBtn.addEventListener('click', () => performGameAction('coup', { target: player.name }));
+                                targetBtn.addEventListener('click', () =>
+                                    performGameAction('steal', { target: player.name })
+                                );
                                 targetList.appendChild(targetBtn);
                             }
                         });
-                        
+
                         targetSelection.appendChild(targetList);
                         gameActions.innerHTML = '';
                         gameActions.appendChild(targetSelection);
                     });
-                    gameActions.appendChild(coupBtn);
+                    gameActions.appendChild(stealBtn);
+
+                    // Ambassador action (exchange)
+                    const exchangeBtn = document.createElement('button');
+                    exchangeBtn.className = 'action-btn';
+                    exchangeBtn.textContent = 'Exchange (Ambassador)';
+                    exchangeBtn.addEventListener('click', () => performGameAction('exchange'));
+                    gameActions.appendChild(exchangeBtn);
                 }
-                
-                // Add character-specific actions
-                // These would be based on the player's cards
-                // For simplicity, we'll just add all possible actions
-                
-                // Duke action (tax)
-                const taxBtn = document.createElement('button');
-                taxBtn.className = 'action-btn';
-                taxBtn.textContent = 'Tax (+3 coins, Duke)';
-                taxBtn.addEventListener('click', () => performGameAction('tax'));
-                gameActions.appendChild(taxBtn);
-                
-                // Assassin action (assassinate)
-                if (currentPlayer && currentPlayer.coins >= 3) {
-                    const assassinateBtn = document.createElement('button');
-                    assassinateBtn.className = 'action-btn';
-                    assassinateBtn.textContent = 'Assassinate (3 coins, Assassin)';
-                    assassinateBtn.addEventListener('click', () => {
-                        // Show target selection
-                        const targetSelection = document.createElement('div');
-                        targetSelection.className = 'target-selection';
-                        targetSelection.innerHTML = '<p>Select a target:</p>';
-                        
-                        const targetList = document.createElement('div');
-                        gameState.players.forEach(player => {
-                            if (player.name !== gameState.current_player && player.is_alive) {
-                                const targetBtn = document.createElement('button');
-                                targetBtn.className = 'target-btn';
-                                targetBtn.textContent = player.name;
-                                targetBtn.addEventListener('click', () => performGameAction('assassinate', { target: player.name }));
-                                targetList.appendChild(targetBtn);
-                            }
-                        });
-                        
-                        targetSelection.appendChild(targetList);
-                        gameActions.innerHTML = '';
-                        gameActions.appendChild(targetSelection);
+            }
+
+            function performGameAction(action, params = {}) {
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    // If we have a target name, convert it to target_id
+                    if (params.target && gameState && gameState.players) {
+                        const targetPlayer = gameState.players.find(p => p.name === params.target);
+                        if (targetPlayer) {
+                            // Replace target name with target_id
+                            params = { ...params, target_id: targetPlayer.id };
+                            delete params.target;
+                        }
+                    }
+
+                    console.log('Performing action:', action, 'with params:', params);
+
+                    socket.send(
+                        JSON.stringify({
+                            type: 'game_action',
+                            action: {
+                                action_type: 'perform_action',
+                                game_action: {
+                                    action_type: action,
+                                    ...params,
+                                },
+                            },
+                        })
+                    );
+                }
+            }
+
+            function toggleReady() {
+                isReady = !isReady;
+                readyBtn.textContent = isReady ? "I'm Not Ready" : "I'm Ready";
+
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    socket.send(
+                        JSON.stringify({
+                            type: 'ready',
+                            ready: isReady,
+                        })
+                    );
+                }
+            }
+
+            function sendChatMessage() {
+                const message = chatInput.value.trim();
+                if (!message) return;
+
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    socket.send(
+                        JSON.stringify({
+                            type: 'chat',
+                            message: message,
+                        })
+                    );
+
+                    chatInput.value = '';
+                }
+            }
+
+            function sendGameChatMessage() {
+                const message = gameChatInput.value.trim();
+                if (!message) return;
+
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    socket.send(
+                        JSON.stringify({
+                            type: 'chat',
+                            message: message,
+                        })
+                    );
+
+                    gameChatInput.value = '';
+                }
+            }
+
+            function addChatMessage(sender, message) {
+                const messageElement = document.createElement('div');
+                messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
+                chatMessages.appendChild(messageElement);
+
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function addGameChatMessage(sender, message) {
+                const messageElement = document.createElement('div');
+                messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
+                gameChatMessages.appendChild(messageElement);
+
+                // Scroll to bottom
+                gameChatMessages.scrollTop = gameChatMessages.scrollHeight;
+            }
+
+            function showChallengeOptions() {
+                // Only show challenge options if it's not your turn (you can't challenge yourself)
+                if (gameState.is_your_turn) {
+                    return;
+                }
+
+                console.log('Showing challenge options');
+
+                // Create challenge UI
+                const challengeDiv = document.createElement('div');
+                challengeDiv.className = 'challenge-options';
+                challengeDiv.innerHTML = '<h3>Challenge Options</h3>';
+
+                // Add challenge button
+                const challengeBtn = document.createElement('button');
+                challengeBtn.className = 'action-btn';
+                challengeBtn.textContent = 'Challenge';
+                challengeBtn.addEventListener('click', () => {
+                    console.log('Challenge button clicked');
+                    socket.send(
+                        JSON.stringify({
+                            type: 'game_action',
+                            action: {
+                                action_type: 'challenge',
+                            },
+                        })
+                    );
+                });
+                challengeDiv.appendChild(challengeBtn);
+
+                // Add pass button
+                const passBtn = document.createElement('button');
+                passBtn.className = 'action-btn';
+                passBtn.textContent = 'Pass';
+                passBtn.addEventListener('click', () => {
+                    console.log('Pass button clicked');
+                    socket.send(
+                        JSON.stringify({
+                            type: 'game_action',
+                            action: {
+                                action_type: 'pass_challenge',
+                            },
+                        })
+                    );
+                });
+                challengeDiv.appendChild(passBtn);
+
+                // Add to game actions
+                gameActions.innerHTML = '';
+                gameActions.appendChild(challengeDiv);
+
+                // Add explanation
+                if (gameState.pending_action) {
+                    const actionType = gameState.pending_action.action.action_type;
+                    const playerName =
+                        gameState.players.find(p => p.id === gameState.pending_action.player_id)
+                            ?.name || 'Unknown';
+
+                    addGameChatMessage(
+                        'System',
+                        `${playerName} is attempting to use ${actionType}. You can challenge or pass.`
+                    );
+                } else if (gameState.pending_counteraction) {
+                    const counterType = gameState.pending_counteraction.counter_action.counter_type;
+                    const playerName =
+                        gameState.players.find(
+                            p => p.id === gameState.pending_counteraction.player_id
+                        )?.name || 'Unknown';
+
+                    addGameChatMessage(
+                        'System',
+                        `${playerName} is attempting to block with ${gameState.pending_counteraction.claimed_character}. You can challenge or pass.`
+                    );
+                }
+            }
+
+            function showCounteractionOptions() {
+                // Only show counteraction options if it's not your turn (you can't counter your own action)
+                const pendingAction = gameState.pending_action;
+                if (!pendingAction) {
+                    console.error('No pending action for counteraction');
+                    return;
+                }
+
+                if (gameState.is_your_turn) {
+                    console.log('Cannot counter your own action');
+                    return;
+                }
+
+                console.log('Showing counteraction options for action:', pendingAction);
+
+                // For targeted actions like steal and assassinate, only the target can counter
+                // For non-targeted actions like foreign aid, anyone can counter
+                const actionType = pendingAction.action.action_type;
+
+                if (
+                    (actionType === 'steal' || actionType === 'assassinate') &&
+                    pendingAction.action.target_id
+                ) {
+                    // For targeted actions, check if you're the target
+                    // Since we don't have a reliable way to get the current player's ID from the client,
+                    // we'll allow all non-active players to counter for now
+                    // This is a simplification, but it will work for testing
+                    console.log(
+                        'This is a targeted action, ideally only the target should counter'
+                    );
+                }
+
+                // Create counteraction UI
+                const counterDiv = document.createElement('div');
+                counterDiv.className = 'counter-options';
+                counterDiv.innerHTML = '<h3>Counteraction Options</h3>';
+
+                console.log('Action type for counteraction:', actionType);
+
+                // Add appropriate counter buttons based on the action
+                if (actionType === 'foreign_aid') {
+                    // Duke can block foreign aid
+                    const blockBtn = document.createElement('button');
+                    blockBtn.className = 'action-btn';
+                    blockBtn.textContent = 'Block with Duke';
+                    blockBtn.addEventListener('click', () => {
+                        console.log('Blocking foreign aid with Duke');
+                        socket.send(
+                            JSON.stringify({
+                                type: 'game_action',
+                                action: {
+                                    action_type: 'counter',
+                                    counter_action: {
+                                        counter_type: 'block_foreign_aid',
+                                    },
+                                },
+                            })
+                        );
                     });
-                    gameActions.appendChild(assassinateBtn);
-                }
-                
-                // Captain action (steal)
-                const stealBtn = document.createElement('button');
-                stealBtn.className = 'action-btn';
-                stealBtn.textContent = 'Steal (2 coins, Captain)';
-                stealBtn.addEventListener('click', () => {
-                    // Show target selection
-                    const targetSelection = document.createElement('div');
-                    targetSelection.className = 'target-selection';
-                    targetSelection.innerHTML = '<p>Select a target:</p>';
-                    
-                    const targetList = document.createElement('div');
-                    gameState.players.forEach(player => {
-                        if (player.name !== gameState.current_player && player.is_alive) {
-                            const targetBtn = document.createElement('button');
-                            targetBtn.className = 'target-btn';
-                            targetBtn.textContent = player.name;
-                            targetBtn.addEventListener('click', () => performGameAction('steal', { target: player.name }));
-                            targetList.appendChild(targetBtn);
-                        }
+                    counterDiv.appendChild(blockBtn);
+                } else if (actionType === 'assassinate') {
+                    // Contessa can block assassination
+                    const blockBtn = document.createElement('button');
+                    blockBtn.className = 'action-btn';
+                    blockBtn.textContent = 'Block with Contessa';
+                    blockBtn.addEventListener('click', () => {
+                        console.log('Blocking assassination with Contessa');
+                        socket.send(
+                            JSON.stringify({
+                                type: 'game_action',
+                                action: {
+                                    action_type: 'counter',
+                                    counter_action: {
+                                        counter_type: 'block_assassination',
+                                    },
+                                },
+                            })
+                        );
                     });
-                    
-                    targetSelection.appendChild(targetList);
-                    gameActions.innerHTML = '';
-                    gameActions.appendChild(targetSelection);
-                });
-                gameActions.appendChild(stealBtn);
-                
-                // Ambassador action (exchange)
-                const exchangeBtn = document.createElement('button');
-                exchangeBtn.className = 'action-btn';
-                exchangeBtn.textContent = 'Exchange (Ambassador)';
-                exchangeBtn.addEventListener('click', () => performGameAction('exchange'));
-                gameActions.appendChild(exchangeBtn);
-            }
-        }
-        
-        function performGameAction(action, params = {}) {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                // If we have a target name, convert it to target_id
-                if (params.target && gameState && gameState.players) {
-                    const targetPlayer = gameState.players.find(p => p.name === params.target);
-                    if (targetPlayer) {
-                        // Replace target name with target_id
-                        params = { ...params, target_id: targetPlayer.id };
-                        delete params.target;
-                    }
+                    counterDiv.appendChild(blockBtn);
+                } else if (actionType === 'steal') {
+                    // Captain or Ambassador can block stealing
+                    const blockCaptainBtn = document.createElement('button');
+                    blockCaptainBtn.className = 'action-btn';
+                    blockCaptainBtn.textContent = 'Block with Captain';
+                    blockCaptainBtn.addEventListener('click', () => {
+                        console.log('Blocking stealing with Captain');
+                        socket.send(
+                            JSON.stringify({
+                                type: 'game_action',
+                                action: {
+                                    action_type: 'counter',
+                                    counter_action: {
+                                        counter_type: 'block_stealing',
+                                        character: 'captain',
+                                    },
+                                },
+                            })
+                        );
+                    });
+                    counterDiv.appendChild(blockCaptainBtn);
+
+                    const blockAmbassadorBtn = document.createElement('button');
+                    blockAmbassadorBtn.className = 'action-btn';
+                    blockAmbassadorBtn.textContent = 'Block with Ambassador';
+                    blockAmbassadorBtn.addEventListener('click', () => {
+                        console.log('Blocking stealing with Ambassador');
+                        socket.send(
+                            JSON.stringify({
+                                type: 'game_action',
+                                action: {
+                                    action_type: 'counter',
+                                    counter_action: {
+                                        counter_type: 'block_stealing',
+                                        character: 'ambassador',
+                                    },
+                                },
+                            })
+                        );
+                    });
+                    counterDiv.appendChild(blockAmbassadorBtn);
                 }
-                
-                console.log('Performing action:', action, 'with params:', params);
-                
-                socket.send(JSON.stringify({
-                    type: 'game_action',
-                    action: {
-                        action_type: 'perform_action',
-                        game_action: {
-                            action_type: action,
-                            ...params
-                        }
-                    }
-                }));
-            }
-        }
 
-        function toggleReady() {
-            isReady = !isReady;
-            readyBtn.textContent = isReady ? "I'm Not Ready" : "I'm Ready";
-            
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: 'ready',
-                    ready: isReady
-                }));
-            }
-        }
+                // Add pass button
+                const passBtn = document.createElement('button');
+                passBtn.className = 'action-btn';
+                passBtn.textContent = 'Pass';
+                passBtn.addEventListener('click', () => {
+                    console.log('Passing on counteraction');
+                    socket.send(
+                        JSON.stringify({
+                            type: 'game_action',
+                            action: {
+                                action_type: 'pass_counter',
+                            },
+                        })
+                    );
+                });
+                counterDiv.appendChild(passBtn);
 
-        function sendChatMessage() {
-            const message = chatInput.value.trim();
-            if (!message) return;
-            
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: 'chat',
-                    message: message
-                }));
-                
-                chatInput.value = '';
-            }
-        }
-        
-        function sendGameChatMessage() {
-            const message = gameChatInput.value.trim();
-            if (!message) return;
-            
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: 'chat',
-                    message: message
-                }));
-                
-                gameChatInput.value = '';
-            }
-        }
+                // Add to game actions
+                gameActions.innerHTML = '';
+                gameActions.appendChild(counterDiv);
 
-        function addChatMessage(sender, message) {
-            const messageElement = document.createElement('div');
-            messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
-            chatMessages.appendChild(messageElement);
-            
-            // Scroll to bottom
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-        
-        function addGameChatMessage(sender, message) {
-            const messageElement = document.createElement('div');
-            messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
-            gameChatMessages.appendChild(messageElement);
-            
-            // Scroll to bottom
-            gameChatMessages.scrollTop = gameChatMessages.scrollHeight;
-        }
-        
-        function showChallengeOptions() {
-            // Only show challenge options if it's not your turn (you can't challenge yourself)
-            if (gameState.is_your_turn) {
-                return;
+                // Add explanation
+                const playerName =
+                    gameState.players.find(p => p.id === pendingAction.player_id)?.name ||
+                    'Unknown';
+                addGameChatMessage(
+                    'System',
+                    `${playerName} is attempting ${actionType}. You can counter or pass.`
+                );
             }
-            
-            console.log('Showing challenge options');
-            
-            // Create challenge UI
-            const challengeDiv = document.createElement('div');
-            challengeDiv.className = 'challenge-options';
-            challengeDiv.innerHTML = '<h3>Challenge Options</h3>';
-            
-            // Add challenge button
-            const challengeBtn = document.createElement('button');
-            challengeBtn.className = 'action-btn';
-            challengeBtn.textContent = 'Challenge';
-            challengeBtn.addEventListener('click', () => {
-                console.log('Challenge button clicked');
-                socket.send(JSON.stringify({
-                    type: 'game_action',
-                    action: {
-                        action_type: 'challenge'
-                    }
-                }));
-            });
-            challengeDiv.appendChild(challengeBtn);
-            
-            // Add pass button
-            const passBtn = document.createElement('button');
-            passBtn.className = 'action-btn';
-            passBtn.textContent = 'Pass';
-            passBtn.addEventListener('click', () => {
-                console.log('Pass button clicked');
-                socket.send(JSON.stringify({
-                    type: 'game_action',
-                    action: {
-                        action_type: 'pass_challenge'
-                    }
-                }));
-            });
-            challengeDiv.appendChild(passBtn);
-            
-            // Add to game actions
-            gameActions.innerHTML = '';
-            gameActions.appendChild(challengeDiv);
-            
-            // Add explanation
-            if (gameState.pending_action) {
-                const actionType = gameState.pending_action.action.action_type;
-                const playerName = gameState.players.find(p => p.id === gameState.pending_action.player_id)?.name || 'Unknown';
-                
-                addGameChatMessage('System', `${playerName} is attempting to use ${actionType}. You can challenge or pass.`);
-            } else if (gameState.pending_counteraction) {
-                const counterType = gameState.pending_counteraction.counter_action.counter_type;
-                const playerName = gameState.players.find(p => p.id === gameState.pending_counteraction.player_id)?.name || 'Unknown';
-                
-                addGameChatMessage('System', `${playerName} is attempting to block with ${gameState.pending_counteraction.claimed_character}. You can challenge or pass.`);
-            }
-        }
-        
-        function showCounteractionOptions() {
-            // Only show counteraction options if it's not your turn (you can't counter your own action)
-            const pendingAction = gameState.pending_action;
-            if (!pendingAction) {
-                console.error('No pending action for counteraction');
-                return;
-            }
-            
-            if (gameState.is_your_turn) {
-                console.log('Cannot counter your own action');
-                return;
-            }
-            
-            console.log('Showing counteraction options for action:', pendingAction);
-            
-            // For targeted actions like steal and assassinate, only the target can counter
-            // For non-targeted actions like foreign aid, anyone can counter
-            const actionType = pendingAction.action.action_type;
-            
-            if ((actionType === 'steal' || actionType === 'assassinate') && pendingAction.action.target_id) {
-                // For targeted actions, check if you're the target
-                // Since we don't have a reliable way to get the current player's ID from the client,
-                // we'll allow all non-active players to counter for now
-                // This is a simplification, but it will work for testing
-                console.log('This is a targeted action, ideally only the target should counter');
-            }
-            
-            // Create counteraction UI
-            const counterDiv = document.createElement('div');
-            counterDiv.className = 'counter-options';
-            counterDiv.innerHTML = '<h3>Counteraction Options</h3>';
-            
-            console.log('Action type for counteraction:', actionType);
-            
-            // Add appropriate counter buttons based on the action
-            if (actionType === 'foreign_aid') {
-                // Duke can block foreign aid
-                const blockBtn = document.createElement('button');
-                blockBtn.className = 'action-btn';
-                blockBtn.textContent = 'Block with Duke';
-                blockBtn.addEventListener('click', () => {
-                    console.log('Blocking foreign aid with Duke');
-                    socket.send(JSON.stringify({
-                        type: 'game_action',
-                        action: {
-                            action_type: 'counter',
-                            counter_action: {
-                                counter_type: 'block_foreign_aid'
+
+            function showExchangeOptions(cards) {
+                if (!cards || !Array.isArray(cards)) {
+                    console.error('Invalid cards for exchange:', cards);
+                    return;
+                }
+
+                // Create exchange UI
+                const exchangeDiv = document.createElement('div');
+                exchangeDiv.className = 'exchange-options';
+                exchangeDiv.innerHTML = '<h3>Exchange Cards</h3><p>Select which cards to keep:</p>';
+
+                // Create card selection
+                const cardSelection = document.createElement('div');
+                cardSelection.className = 'card-selection';
+
+                // Track selected cards
+                const selectedIndices = [];
+                const numToKeep = 2; // Players always keep 2 cards
+
+                // Add cards
+                cards.forEach((card, index) => {
+                    const cardElement = document.createElement('div');
+                    cardElement.className = 'character-card selectable';
+                    cardElement.textContent = card;
+                    cardElement.dataset.index = index;
+
+                    // Add click handler
+                    cardElement.addEventListener('click', () => {
+                        // Toggle selection
+                        if (cardElement.classList.contains('selected')) {
+                            cardElement.classList.remove('selected');
+                            const indexPosition = selectedIndices.indexOf(index);
+                            if (indexPosition !== -1) {
+                                selectedIndices.splice(indexPosition, 1);
+                            }
+                        } else {
+                            // Only allow selecting up to numToKeep cards
+                            if (selectedIndices.length < numToKeep) {
+                                cardElement.classList.add('selected');
+                                selectedIndices.push(index);
                             }
                         }
-                    }));
-                });
-                counterDiv.appendChild(blockBtn);
-            } else if (actionType === 'assassinate') {
-                // Contessa can block assassination
-                const blockBtn = document.createElement('button');
-                blockBtn.className = 'action-btn';
-                blockBtn.textContent = 'Block with Contessa';
-                blockBtn.addEventListener('click', () => {
-                    console.log('Blocking assassination with Contessa');
-                    socket.send(JSON.stringify({
-                        type: 'game_action',
-                        action: {
-                            action_type: 'counter',
-                            counter_action: {
-                                counter_type: 'block_assassination'
-                            }
-                        }
-                    }));
-                });
-                counterDiv.appendChild(blockBtn);
-            } else if (actionType === 'steal') {
-                // Captain or Ambassador can block stealing
-                const blockCaptainBtn = document.createElement('button');
-                blockCaptainBtn.className = 'action-btn';
-                blockCaptainBtn.textContent = 'Block with Captain';
-                blockCaptainBtn.addEventListener('click', () => {
-                    console.log('Blocking stealing with Captain');
-                    socket.send(JSON.stringify({
-                        type: 'game_action',
-                        action: {
-                            action_type: 'counter',
-                            counter_action: {
-                                counter_type: 'block_stealing',
-                                character: 'captain'
-                            }
-                        }
-                    }));
-                });
-                counterDiv.appendChild(blockCaptainBtn);
-                
-                const blockAmbassadorBtn = document.createElement('button');
-                blockAmbassadorBtn.className = 'action-btn';
-                blockAmbassadorBtn.textContent = 'Block with Ambassador';
-                blockAmbassadorBtn.addEventListener('click', () => {
-                    console.log('Blocking stealing with Ambassador');
-                    socket.send(JSON.stringify({
-                        type: 'game_action',
-                        action: {
-                            action_type: 'counter',
-                            counter_action: {
-                                counter_type: 'block_stealing',
-                                character: 'ambassador'
-                            }
-                        }
-                    }));
-                });
-                counterDiv.appendChild(blockAmbassadorBtn);
-            }
-            
-            // Add pass button
-            const passBtn = document.createElement('button');
-            passBtn.className = 'action-btn';
-            passBtn.textContent = 'Pass';
-            passBtn.addEventListener('click', () => {
-                console.log('Passing on counteraction');
-                socket.send(JSON.stringify({
-                    type: 'game_action',
-                    action: {
-                        action_type: 'pass_counter'
-                    }
-                }));
-            });
-            counterDiv.appendChild(passBtn);
-            
-            // Add to game actions
-            gameActions.innerHTML = '';
-            gameActions.appendChild(counterDiv);
-            
-            // Add explanation
-            const playerName = gameState.players.find(p => p.id === pendingAction.player_id)?.name || 'Unknown';
-            addGameChatMessage('System', `${playerName} is attempting ${actionType}. You can counter or pass.`);
-        }
 
-        function showExchangeOptions(cards) {
-            if (!cards || !Array.isArray(cards)) {
-                console.error('Invalid cards for exchange:', cards);
-                return;
-            }
-            
-            // Create exchange UI
-            const exchangeDiv = document.createElement('div');
-            exchangeDiv.className = 'exchange-options';
-            exchangeDiv.innerHTML = '<h3>Exchange Cards</h3><p>Select which cards to keep:</p>';
-            
-            // Create card selection
-            const cardSelection = document.createElement('div');
-            cardSelection.className = 'card-selection';
-            
-            // Track selected cards
-            const selectedIndices = [];
-            const numToKeep = 2; // Players always keep 2 cards
-            
-            // Add cards
-            cards.forEach((card, index) => {
-                const cardElement = document.createElement('div');
-                cardElement.className = 'character-card selectable';
-                cardElement.textContent = card;
-                cardElement.dataset.index = index;
-                
-                // Add click handler
-                cardElement.addEventListener('click', () => {
-                    // Toggle selection
-                    if (cardElement.classList.contains('selected')) {
-                        cardElement.classList.remove('selected');
-                        const indexPosition = selectedIndices.indexOf(index);
-                        if (indexPosition !== -1) {
-                            selectedIndices.splice(indexPosition, 1);
-                        }
-                    } else {
-                        // Only allow selecting up to numToKeep cards
-                        if (selectedIndices.length < numToKeep) {
-                            cardElement.classList.add('selected');
-                            selectedIndices.push(index);
-                        }
-                    }
-                    
-                    // Enable/disable confirm button
-                    confirmBtn.disabled = selectedIndices.length !== numToKeep;
+                        // Enable/disable confirm button
+                        confirmBtn.disabled = selectedIndices.length !== numToKeep;
+                    });
+
+                    cardSelection.appendChild(cardElement);
                 });
-                
-                cardSelection.appendChild(cardElement);
-            });
-            
-            exchangeDiv.appendChild(cardSelection);
-            
-            // Add confirm button
-            const confirmBtn = document.createElement('button');
-            confirmBtn.className = 'action-btn';
-            confirmBtn.textContent = 'Confirm Selection';
-            confirmBtn.disabled = true;
-            confirmBtn.addEventListener('click', () => {
-                socket.send(JSON.stringify({
-                    type: 'game_action',
-                    action: {
-                        action_type: 'complete_exchange',
-                        kept_indices: selectedIndices
-                    }
-                }));
-            });
-            exchangeDiv.appendChild(confirmBtn);
-            
-            // Add to game actions
-            gameActions.innerHTML = '';
-            gameActions.appendChild(exchangeDiv);
-            
-            // Add explanation
-            addGameChatMessage('System', `You are exchanging cards. Select ${numToKeep} cards to keep.`);
-        }
-    </script>
-</body>
-</html> 
+
+                exchangeDiv.appendChild(cardSelection);
+
+                // Add confirm button
+                const confirmBtn = document.createElement('button');
+                confirmBtn.className = 'action-btn';
+                confirmBtn.textContent = 'Confirm Selection';
+                confirmBtn.disabled = true;
+                confirmBtn.addEventListener('click', () => {
+                    socket.send(
+                        JSON.stringify({
+                            type: 'game_action',
+                            action: {
+                                action_type: 'complete_exchange',
+                                kept_indices: selectedIndices,
+                            },
+                        })
+                    );
+                });
+                exchangeDiv.appendChild(confirmBtn);
+
+                // Add to game actions
+                gameActions.innerHTML = '';
+                gameActions.appendChild(exchangeDiv);
+
+                // Add explanation
+                addGameChatMessage(
+                    'System',
+                    `You are exchanging cards. Select ${numToKeep} cards to keep.`
+                );
+            }
+        </script>
+    </body>
+</html>
