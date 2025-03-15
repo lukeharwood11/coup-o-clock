@@ -1,0 +1,20 @@
+[project]
+name = "coup-o-clock"
+version = "0.1.0"
+description = "Coup-o-clock"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard]",
+    "uvicorn",
+    "python-dotenv",
+    "pydantic",
+    "pydantic-settings",
+    "python-socketio",
+    "boto3>=1.37.4",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+]

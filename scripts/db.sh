@@ -1,0 +1,1 @@
+aws dynamodb create-table --table-name Rooms --attribute-definitions AttributeName=code,AttributeType=S --key-schema AttributeName=code,KeyType=HASH --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 --tags Key=Project,Value=CoupOClock --endpoint-url http://localhost:8000
