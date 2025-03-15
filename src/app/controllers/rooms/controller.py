@@ -121,11 +121,15 @@ def check_all_players_ready(room_code: str) -> bool:
     if not ws_manager.are_all_players_ready(room_code):
         return False
 
-    # Get all player names in the room
-    player_names = [p["name"] for p in ws_manager.get_room_players(room_code)]
+    # Get all players in the room with their IDs
+    players = ws_manager.get_room_players(room_code)
+    player_info = []
+    for player in players:
+        player_id = ws_manager.get_player_id(player["websocket"])
+        player_info.append({"name": player["name"], "id": player_id})
 
-    # Create a new game
-    game_manager.create_game(room_code, player_names)
+    # Create a new game with the player IDs from the websocket manager
+    game_manager.create_game(room_code, player_info)
 
     # Start the game
     game_manager.start_game(room_code)

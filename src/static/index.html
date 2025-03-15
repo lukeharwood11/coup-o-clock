@@ -375,15 +375,34 @@
                     // Hide room card, show game card
                     roomCard.classList.add('hidden');
                     gameCard.classList.remove('hidden');
+                    
+                    console.log('Game start message received:', message);
                     break;
                     
                 case 'game_state':
+                    console.log('Game state message received:', message);
                     gameState = message.state;
                     updateGameBoard();
+                    
+                    // If we're in the "Game is starting" state, update the game info
+                    if (gameState && gameState.status === "PLAYING") {
+                        // Clear the "Game is starting" message
+                        addGameChatMessage('System', `Game has started! It's ${gameState.current_player}'s turn.`);
+                        
+                        // Make sure the game card is visible
+                        roomCard.classList.add('hidden');
+                        gameCard.classList.remove('hidden');
+                    } else {
+                        console.error('Game state is not PLAYING:', gameState);
+                    }
                     break;
                     
                 case 'game_action':
                     addGameChatMessage('Game', `${message.player} performed action: ${JSON.stringify(message.action)}`);
+                    break;
+                    
+                case 'game_action_result':
+                    addGameChatMessage('Game', `${message.player} action result: ${message.result.message || JSON.stringify(message.result)}`);
                     break;
                     
                 case 'error':
@@ -412,7 +431,12 @@
         }
 
         function updateGameBoard() {
-            if (!gameState) return;
+            if (!gameState) {
+                console.error('Cannot update game board: gameState is null or undefined');
+                return;
+            }
+            
+            console.log('Updating game board with state:', gameState);
             
             // Update turn and current player display
             turnDisplay.textContent = gameState.turn_number;
@@ -423,6 +447,8 @@
             
             // Add player cards
             gameState.players.forEach(player => {
+                console.log('Adding player to game board:', player);
+                
                 const playerCard = document.createElement('div');
                 playerCard.className = 'player-card';
                 
@@ -613,8 +639,11 @@
                 socket.send(JSON.stringify({
                     type: 'game_action',
                     action: {
-                        type: action,
-                        ...params
+                        action_type: 'perform_action',
+                        game_action: {
+                            action_type: action,
+                            ...params
+                        }
                     }
                 }));
             }
