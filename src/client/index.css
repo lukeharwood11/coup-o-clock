@@ -1,4 +1,9 @@
 :root {
+  --contessa-red: #8b0000;
+  --captain-blue: #5093f2;
+  --duke-purple: #800080;
+  --ambassador-green: #008000;
+  --assassin-black: #000000;
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;

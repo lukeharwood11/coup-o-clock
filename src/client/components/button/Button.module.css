@@ -1,0 +1,53 @@
+.button {
+    background-color: #000;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon {
+    margin-left: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}   
+
+.primary {
+    background-color: var(--captain-blue);
+    color: #fff;
+}
+
+.secondary {
+    background-color: transparent;
+    color: lightgray;
+}
+
+.danger {
+    background-color: var(--contessa-red);
+    color: #fff;
+}
+
+.subtle {
+    background-color: transparent;
+    color: var(--captain-blue);
+}
+
+.button:hover {
+    outline: none;
+    border: none;
+}
+
+.button:focus {
+    outline: none;
+    border: none;
+}
+
+.button:active {
+    outline: none;
+}

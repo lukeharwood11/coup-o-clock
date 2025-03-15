@@ -1,0 +1,22 @@
+{
+    "contessa": {
+        "name": "Contessa",
+        "description": "Card 1 description"
+    },
+    "captain": {
+        "name": "Captain",
+        "description": "Card 2 description"
+    },
+    "duke": {
+        "name": "Duke",
+        "description": "Card 3 description"
+    },
+    "ambassador": {
+        "name": "Ambassador",
+        "description": "Card 4 description"
+    },
+    "assassin": {
+        "name": "Assassin",
+        "description": "Card 5 description"
+    }
+}
