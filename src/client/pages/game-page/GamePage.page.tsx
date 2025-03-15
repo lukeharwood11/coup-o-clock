@@ -3,11 +3,9 @@ import './GamePageOverride.css';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '../../components/button/Button';
-import { FaBars, FaTimes } from 'react-icons/fa';
-import { MdMessage, MdPerson } from 'react-icons/md';
+import { MdPerson } from 'react-icons/md';
 import { Card } from '../../components/card/Card';
-import contessa from '../../assets/contessa.webp';
-import captain from '../../assets/captain.webp';
+import { MessageBar, Message } from '../../components/message-bar';
 
 enum GameState {
     WaitingForPlayers = 'WaitingForPlayers',
@@ -19,9 +17,32 @@ export const GamePage = () => {
     const [gameState, setGameState] = useState<GameState>(GameState.WaitingForPlayers);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [handShowing, setHandShowing] = useState(false);
+    const [messages, setMessages] = useState<Message[]>([
+        {
+            id: '1',
+            text: 'Welcome to Coup O\' Clock!',
+            sender: 'system',
+            timestamp: new Date(),
+        },
+        {
+            id: '2',
+            text: 'Player 1 has joined the game.',
+            sender: 'system-notification',
+            timestamp: new Date(),
+        },
+        {
+            id: '3',
+            text: 'Waiting for other players to join...',
+            sender: 'system',
+            timestamp: new Date(),
+        },
+    ]);
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
+    };
+
+    const handleSendMessage = (message: string) => {
     };
 
     return (
@@ -35,41 +56,12 @@ export const GamePage = () => {
                 </div>
             </div>
             <div className={styles.gameContainer}>
-                <motion.div
-                    className={styles.gameSidebar}
-                    initial={{ width: 250 }}
-                    animate={{
-                        width: isSidebarOpen ? 250 : 0,
-                        padding: isSidebarOpen ? 20 : 0,
-                        opacity: isSidebarOpen ? 1 : 0,
-                    }}
-                    transition={{ duration: 0.3, ease: 'easeInOut' }}
-                >
-                    {/* Sidebar content */}
-                </motion.div>
-                <motion.div
-                    className={styles.sidebarToggle}
-                    animate={{
-                        left: isSidebarOpen ? 260 : 10,
-                    }}
-                    transition={{ duration: 0.3, ease: 'easeInOut' }}
-                >
-                    <motion.div
-                        className={styles.toggleButtonContainer}
-                        animate={{
-                            rotate: isSidebarOpen ? 90 : 0,
-                        }}
-                        transition={{ duration: 0.3, ease: 'easeInOut' }}
-                    >
-                        <Button
-                            onClick={toggleSidebar}
-                            variant="subtle"
-                            className={styles.toggleButton}
-                        >
-                            {isSidebarOpen ? <FaTimes /> : <FaBars />}
-                        </Button>
-                    </motion.div>
-                </motion.div>
+                <MessageBar 
+                    isOpen={isSidebarOpen}
+                    onToggle={toggleSidebar}
+                    messages={messages}
+                    onSendMessage={handleSendMessage}
+                />
                 <div className={styles.mainGameContainer}>
                     <div className={styles.gameContent}>
                         {/* Main game content goes here */}
@@ -83,9 +75,6 @@ export const GamePage = () => {
                     </div>
                     <div className={styles.gameFooter}>
                         {/* action buttons go here */}
-                        <Button icon={<MdMessage />} variant="subtle" onClick={() => {}}>
-                            Chat
-                        </Button>
                     </div>
                 </div>
             </div>

@@ -45,20 +45,6 @@
     position: relative;
 }
 
-.gameSidebar {
-    height: 100%;
-    background-color: #f9f9f9;
-    border-right: 1px solid #e0e0e0;
-    overflow: hidden;
-    box-sizing: border-box;
-}
-
-.sidebarToggle {
-    position: absolute;
-    top: 20px;
-    z-index: 100;
-}
-
 .toggleButtonContainer {
     position: absolute;
     z-index: 100;

@@ -1,0 +1,136 @@
+.messageBar {
+    height: 100%;
+    background-color: #f9f9f9;
+    border-right: 1px solid #e0e0e0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.messageBarHeader {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 10px;
+}
+
+.messageBarHeader h2 {
+    font-size: 18px;
+    margin: 0 0 0 40px;
+    color: var(--captain-blue);
+}
+
+.messagesContainer {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 5px;
+    margin-bottom: 10px;
+}
+
+.message {
+    padding: 8px 12px;
+    border-radius: 12px;
+    max-width: 85%;
+    word-break: break-word;
+}
+
+.userMessage {
+    align-self: flex-end;
+    background-color: var(--captain-blue);
+    color: white;
+}
+
+.systemMessage {
+    align-self: flex-start;
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.messageContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.messageContent p {
+    margin: 0 0 5px 0;
+}
+
+.timestamp {
+    font-size: 10px;
+    opacity: 0.7;
+    align-self: flex-end;
+}
+
+.messageInputContainer {
+    display: flex;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.messageInput {
+    flex: 1;
+    padding: 10px 20px;
+    border-radius: 5px;
+    outline: none;
+    border: 1px solid #e0e0e0;
+    background-color: #fff;
+    color: #333;
+    font-family: inherit;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.messageInput:focus {
+    border-color: var(--captain-blue);
+}
+
+.sidebarToggle {
+    position: absolute;
+    top: 20px;
+    z-index: 100;
+}
+
+.toggleButtonContainer {
+    position: absolute;
+    z-index: 100;
+    top: -10px;
+    left: 10px;
+}
+
+.toggleButton {
+    width: 40px;
+    height: 40px;
+    padding: 8px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+.systemNotification {
+    align-self: center;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    max-width: 90%;
+    margin: 5px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.systemNotification p {
+    margin: 0 0 5px 0;
+    font-size: 13px;
+}
+
+.systemNotification .timestamp {
+    font-size: 10px;
+    opacity: 0.7;
+} 
