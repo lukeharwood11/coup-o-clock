@@ -1,6 +1,6 @@
 import styles from './GamePage.module.css';
 import './GamePageOverride.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '../../components/button/Button';
 import { MdPerson } from 'react-icons/md';
@@ -15,8 +15,8 @@ enum GameState {
 }
 
 export const GamePage = () => {
-    const websocket = useWebSocket("1234", "Player 1", true);
-    const [gameState, setGameState] = useState<GameState>(GameState.WaitingForPlayers);
+    const { sendMessage, onMessageType } = useWebSocket("1234", "Player 1", true);
+    const [gameState] = useState<GameState>(GameState.WaitingForPlayers);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [handShowing, setHandShowing] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
@@ -40,11 +40,36 @@ export const GamePage = () => {
         },
     ]);
 
+    // Example of using the websocket
+    useEffect(() => {
+        // Listen for game state updates
+        const unsubscribe = onMessageType('gameStateUpdate', (data) => {
+            // We'll implement this later
+            console.log('Game state updated:', data);
+        });
+        
+        return unsubscribe;
+    }, [onMessageType]);
+
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
 
-    const handleSendMessage = (message: string) => {
+    const handleSendMessage = (messageText: string) => {
+        if (messageText.trim()) {
+            // Add message to local state
+            const newMessage: Message = {
+                id: Date.now().toString(),
+                text: messageText,
+                sender: 'user',
+                timestamp: new Date(),
+            };
+            
+            setMessages(prev => [...prev, newMessage]);
+            
+            // Send message through websocket
+            sendMessage('chatMessage', { text: messageText });
+        }
     };
 
     return (
@@ -67,6 +92,11 @@ export const GamePage = () => {
                 <div className={styles.mainGameContainer}>
                     <div className={styles.gameContent}>
                         {/* Main game content goes here */}
+                        <div className={styles.gameStatus}>
+                            {gameState === GameState.WaitingForPlayers && (
+                                <p>Waiting for players to join...</p>
+                            )}
+                        </div>
                         <motion.div
                             onClick={() => setHandShowing(!handShowing)}
                             className={styles.hand}

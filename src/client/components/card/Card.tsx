@@ -78,9 +78,30 @@ export const Card = ({
 }: CardProps) => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [cardData, setCardData] = useState<CardData>(getCardImage(variant));
+    const [isImageLoading, setIsImageLoading] = useState(true);
+    const [isPopupImageLoading, setIsPopupImageLoading] = useState(true);
 
     useEffect(() => {
-        setCardData(getCardImage(variant));
+        // Reset loading states when variant changes
+        setIsImageLoading(true);
+        setIsPopupImageLoading(true);
+        
+        // Get new card data
+        const newCardData = getCardImage(variant);
+        setCardData(newCardData);
+        
+        // Preload the image
+        if (newCardData.image) {
+            const img = new Image();
+            img.src = newCardData.image;
+            img.onload = () => {
+                setIsImageLoading(false);
+            };
+            img.onerror = () => {
+                // Still mark as loaded even if there's an error to avoid infinite loading state
+                setIsImageLoading(false);
+            };
+        }
     }, [variant]);
 
     const cardStyle = {
@@ -95,6 +116,20 @@ export const Card = ({
     const closePopup = () => {
         setIsPopupOpen(false);
     };
+
+    // Preload popup image when popup is opened
+    useEffect(() => {
+        if (isPopupOpen && cardData.image) {
+            const img = new Image();
+            img.src = cardData.image;
+            img.onload = () => {
+                setIsPopupImageLoading(false);
+            };
+            img.onerror = () => {
+                setIsPopupImageLoading(false);
+            };
+        }
+    }, [isPopupOpen, cardData.image]);
 
     // Animation settings based on flip speed
     const getAnimationSettings = () => {
@@ -130,10 +165,11 @@ export const Card = ({
                     {/* Front of card */}
                     <div className={styles.cardFace}>
                         <div className={styles.cardImageContainer}>
+                            {isImageLoading && <div className={styles.skeleton}></div>}
                             <img
                                 src={cardData.image}
                                 alt={cardData.name}
-                                className={styles.cardImage}
+                                className={`${styles.cardImage} ${isImageLoading ? styles.hidden : ''}`}
                             />
                         </div>
                         {cardStyle.width > 100 && (
@@ -166,7 +202,14 @@ export const Card = ({
                 height="auto"
             >
                 <div className={styles.popupContent}>
-                    <img src={cardData.image} alt={cardData.name} className={styles.popupImage} />
+                    <div style={{ position: 'relative', width: '100%' }}>
+                        {isPopupImageLoading && <div className={styles.skeleton} style={{ height: '200px' }}></div>}
+                        <img 
+                            src={cardData.image} 
+                            alt={cardData.name} 
+                            className={`${styles.popupImage} ${isPopupImageLoading ? styles.hidden : ''}`} 
+                        />
+                    </div>
                     <p>{cardData.description}</p>
                 </div>
             </Popup>

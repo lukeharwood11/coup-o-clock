@@ -20,7 +20,7 @@ def create_app() -> fastapi.FastAPI:
     app.include_router(websockets.router)
 
     # Mount static files
-    static_dir = Path(__file__).parent.parent / "static"
+    static_dir = Path(__file__).parent.parent.parent / "dist"
     if static_dir.exists():
         app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 

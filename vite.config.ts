@@ -11,4 +11,14 @@ export default defineConfig({
             '@': path.resolve(__dirname, './src/client'),
         },
     },
+    server: {
+        port: 5173,
+        proxy: {
+            '/ws/room': {
+                target: 'http://localhost:8000',
+                ws: true,
+                changeOrigin: true
+            }
+        }
+    }
 });
