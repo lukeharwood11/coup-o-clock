@@ -19,26 +19,7 @@ export const GamePage = () => {
     const [gameState] = useState<GameState>(GameState.WaitingForPlayers);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [handShowing, setHandShowing] = useState(false);
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: '1',
-            text: 'Welcome to Coup O\' Clock!',
-            sender: 'system',
-            timestamp: new Date(),
-        },
-        {
-            id: '2',
-            text: 'Player 1 has joined the game.',
-            sender: 'system-notification',
-            timestamp: new Date(),
-        },
-        {
-            id: '3',
-            text: 'Waiting for other players to join...',
-            sender: 'system',
-            timestamp: new Date(),
-        },
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
 
     // Example of using the websocket
     useEffect(() => {
